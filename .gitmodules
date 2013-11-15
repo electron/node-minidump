@@ -1,0 +1,3 @@
+[submodule "deps/breakpad"]
+	path = deps/breakpad
+	url = https://github.com/atom/chromium-breakpad.git
