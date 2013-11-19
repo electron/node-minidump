@@ -20,7 +20,7 @@ minidump = require('minidump');
 
 Add search paths for looking up symbol files.
 
-### minidump.walkStack(minidumpFilePath, callback)
+### minidump.walkStack(minidumpFilePath, [symbolPaths, ]callback)
 
 Get the stack trace from `minidumpFilePath`, the `callback` would be called
 with `callback(error, report)` upon completion.
