@@ -2,7 +2,10 @@
   "main": "./lib/minidump.js",
   "name": "minidump",
   "description": "Read and process minidump file",
-  "version": "0.1.1",
+  "version": "0.2.0",
+  "bin": {
+    "minidump_stackwalk": "build/Release/minidump_stackwalk"
+  },
   "licenses": [
     {
       "type": "MIT",
