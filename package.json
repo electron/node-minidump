@@ -4,7 +4,7 @@
   "description": "Read and process minidump file",
   "version": "0.2.0",
   "bin": {
-    "minidump_stackwalk": "build/Release/minidump_stackwalk"
+    "minidump_stackwalk": "bin/minidump_stackwalk"
   },
   "licenses": [
     {
