@@ -8,4 +8,5 @@ node_js:
 notifications:
   email: false
 
-script: ./script/cibuild
+before_install:
+  git submodule sync && git submodule update --init --recursive
