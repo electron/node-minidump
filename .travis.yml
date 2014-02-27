@@ -8,4 +8,4 @@ node_js:
 notifications:
   email: false
 
-script: npm install .
+script: ./script/cibuild
