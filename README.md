@@ -1,4 +1,4 @@
-# minidump - Process minidump files
+# minidump - Process minidump files [![Build Status](https://travis-ci.org/atom/node-minidump.svg?branch=master)](https://travis-ci.org/atom/node-minidump)
 
 ## Installing
 
