@@ -1,7 +1,14 @@
 {
   'target_defaults': {
-    'xcode_settings': {
-      'OTHER_CFLAGS': ['-w'],
-    },
+    'conditions': [
+      ['OS=="linux"', {
+        'cflags': ['-w'],
+      }],
+      ['OS=="mac"', {
+        'xcode_settings': {
+          'OTHER_CFLAGS': ['-w'],
+        }
+      }]
+    ]
   }
 }
