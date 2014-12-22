@@ -1,4 +1,7 @@
 {
+  'variables': {
+    'chromeos%': 0,
+  },
   'target_defaults': {
     'conditions': [
       ['OS=="linux"', {
