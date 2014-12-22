@@ -1,6 +1,7 @@
 {
   'variables': {
     'chromeos%': 0,
+    'os_bsd%': 0,
   },
   'target_defaults': {
     'conditions': [
