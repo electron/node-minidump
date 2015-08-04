@@ -12,3 +12,7 @@ notifications:
 
 before_install:
   git submodule sync && git submodule update --init --recursive
+
+branches:
+  only:
+    - master
