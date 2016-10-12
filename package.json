@@ -9,15 +9,15 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/atom/node-minidump/raw/master/LICENSE.md"
+      "url": "http://github.com/electron/node-minidump/raw/master/LICENSE.md"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/atom/node-minidump.git"
+    "url": "https://github.com/electron/node-minidump.git"
   },
   "bugs": {
-    "url": "https://github.com/atom/node-minidump/issues"
+    "url": "https://github.com/electron/node-minidump/issues"
   },
   "devDependencies": {
     "electron-download": "^3.0.1",
