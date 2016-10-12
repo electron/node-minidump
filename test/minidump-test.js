@@ -6,14 +6,11 @@ var electronDownload = require('electron-download')
 var extractZip = require('extract-zip')
 var temp = require('temp').track()
 
-var fixturesPath = path.join(__dirname, 'fixtures')
-var symbolsPath = null
-
 describe('minidump', function () {
   this.timeout(60000)
 
   before(function (done) {
-    symbolsPath = temp.mkdirSync('node-minidump-')
+    var symbolsPath = temp.mkdirSync('node-minidump-')
 
     electronDownload({
       version: '1.4.3',
@@ -22,15 +19,16 @@ describe('minidump', function () {
     }, function (error, zipPath) {
       if (error) return done(error)
       extractZip(zipPath, {dir: symbolsPath}, function (error) {
-        done(error)
+        if (error) return done(error)
+        minidump.addSymbolPath(path.join(symbolsPath, 'electron.breakpad.syms'))
+        done()
       })
     })
   })
 
   describe('walkStack()', function () {
     it('calls back with a report that includes symbols', function (done) {
-      minidump.addSymbolPath(path.join(symbolsPath, 'electron.breakpad.syms'))
-      minidump.walkStack(path.join(fixturesPath, 'dump-mac'), function (error, report) {
+      minidump.walkStack(path.join(__dirname, 'fixtures', 'dump-mac'), function (error, report) {
         if (error) return done(error)
 
         report = report.toString()
