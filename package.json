@@ -6,12 +6,7 @@
   "bin": {
     "minidump_stackwalk": "bin/minidump_stackwalk"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://github.com/electron/node-minidump/raw/master/LICENSE.md"
-    }
-  ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/electron/node-minidump.git"
