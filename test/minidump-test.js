@@ -66,6 +66,24 @@ describe('minidump', function () {
         })
       })
     })
+
+    describe('Linux dump', function () {
+      it('calls back with a report', function (done) {
+        downloadElectronSymbols('linux', function (error, symbolsPath) {
+          if (error) return done(error)
+
+          var dumpPath = path.join(__dirname, 'fixtures', 'linux.dmp')
+          minidump.walkStack(dumpPath, symbolsPath, function (error, report) {
+            if (error) return done(error)
+
+            report = report.toString()
+            assert.notEqual(report.length, 0)
+            assert.notEqual(report.indexOf('electron!Crash [atom_bindings.cc : 27 + 0x0]'), -1)
+            done()
+          })
+        })
+      })
+    })
   })
 })
 
