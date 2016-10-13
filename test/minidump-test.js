@@ -6,6 +6,49 @@ var electronDownload = require('electron-download')
 var extractZip = require('extract-zip')
 var temp = require('temp').track()
 
+describe('minidump', function () {
+  this.timeout(60000)
+
+  describe('walkStack()', function () {
+    describe('macOS dump', function () {
+      it('calls back with a report', function (done) {
+        downloadElectronSymbols('darwin', function (error, symbolsPath) {
+          if (error) return done(error)
+
+          var dumpPath = path.join(__dirname, 'fixtures', 'mac.dmp')
+          minidump.walkStack(dumpPath, symbolsPath, function (error, report) {
+            if (error) return done(error)
+
+            report = report.toString()
+            assert.notEqual(report.length, 0)
+            assert.notEqual(report.indexOf('Electron Framework!atom::(anonymous namespace)::Crash() [atom_bindings.cc : 27 + 0x0]'), -1)
+            done()
+          })
+        })
+
+      })
+    })
+
+    describe('Windows dump', function () {
+      it('calls back with a report', function (done) {
+        downloadElectronSymbols('win32', function (error, symbolsPath) {
+          if (error) return done(error)
+
+          var dumpPath = path.join(__dirname, 'fixtures', 'windows.dmp')
+          minidump.walkStack(dumpPath, symbolsPath, function (error, report) {
+            if (error) return done(error)
+
+            report = report.toString()
+            assert.notEqual(report.length, 0)
+            assert.notEqual(report.indexOf('electron.exe!atom::`anonymous namespace\'::Crash [atom_bindings.cc : 27 + 0x0]'), -1)
+            done()
+          })
+        })
+      })
+    })
+  })
+})
+
 var downloadElectronSymbols = function (platform, callback) {
  var symbolsPath = temp.mkdirSync('node-minidump-')
 
@@ -18,46 +61,7 @@ var downloadElectronSymbols = function (platform, callback) {
    if (error) return callback(error)
    extractZip(zipPath, {dir: symbolsPath}, function (error) {
      if (error) return callback(error)
-     minidump.addSymbolPath(path.join(symbolsPath, 'electron.breakpad.syms'))
-     callback()
+     callback(null, path.join(symbolsPath, 'electron.breakpad.syms'))
    })
  })
 }
-
-describe('minidump', function () {
-  this.timeout(60000)
-
-  describe('walkStack()', function () {
-    describe('macOS dump', function () {
-      before(function (done) {
-        downloadElectronSymbols('darwin', done)
-      })
-
-      it('calls back with a report', function (done) {
-        minidump.walkStack(path.join(__dirname, 'fixtures', 'mac.dmp'), function (error, report) {
-          if (error) return done(error)
-
-          report = report.toString()
-          assert.notEqual(report.indexOf('Electron Framework!atom::(anonymous namespace)::Crash() [atom_bindings.cc : 27 + 0x0]'), -1)
-          done()
-        })
-      })
-    })
-
-    describe('Windows dump', function () {
-      before(function (done) {
-        downloadElectronSymbols('win32', done)
-      })
-
-      it('calls back with a report', function (done) {
-        minidump.walkStack(path.join(__dirname, 'fixtures', 'windows.dmp'), function (error, report) {
-          if (error) return done(error)
-
-          report = report.toString()
-          assert.notEqual(report.indexOf('electron.exe!atom::`anonymous namespace\'::Crash [atom_bindings.cc : 27 + 0x0]'), -1)
-          done()
-        })
-      })
-    })
-  })
-})
