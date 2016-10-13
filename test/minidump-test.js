@@ -50,7 +50,8 @@ describe('minidump', function () {
 
 var downloadElectronSymbols = function (platform, callback) {
   electronDownload({
-    version: '1.4.3',
+    version: '1.4.3', // Dumps were generated with Electron 1.4.3 x64
+    arch: 'x64',
     platform: platform,
     symbols: true,
     quiet: true
