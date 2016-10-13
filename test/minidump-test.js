@@ -25,7 +25,6 @@ describe('minidump', function () {
             done()
           })
         })
-
       })
     })
 
@@ -50,18 +49,18 @@ describe('minidump', function () {
 })
 
 var downloadElectronSymbols = function (platform, callback) {
- var symbolsPath = temp.mkdirSync('node-minidump-')
+  electronDownload({
+    version: '1.4.3',
+    platform: platform,
+    symbols: true,
+    quiet: true
+  }, function (error, zipPath) {
+    if (error) return callback(error)
 
- electronDownload({
-   version: '1.4.3',
-   platform: platform,
-   symbols: true,
-   quiet: true
- }, function (error, zipPath) {
-   if (error) return callback(error)
-   extractZip(zipPath, {dir: symbolsPath}, function (error) {
-     if (error) return callback(error)
-     callback(null, path.join(symbolsPath, 'electron.breakpad.syms'))
+    var symbolsPath = temp.mkdirSync('node-minidump-')
+    extractZip(zipPath, {dir: symbolsPath}, function (error) {
+      if (error) return callback(error)
+      callback(null, path.join(symbolsPath, 'electron.breakpad.syms'))
    })
- })
+  })
 }
