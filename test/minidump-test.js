@@ -19,8 +19,10 @@ describe('minidump', function () {
           minidump.walkStack(dumpPath, symbolsPath, function (error, report) {
             if (error) return done(error)
 
-            report = report.toString()
+            assert.equal(Buffer.isBuffer(report), true)
             assert.notEqual(report.length, 0)
+
+            report = report.toString()
             assert.notEqual(report.indexOf('Electron Framework!atom::(anonymous namespace)::Crash() [atom_bindings.cc : 27 + 0x0]'), -1)
             done()
           })
@@ -37,8 +39,10 @@ describe('minidump', function () {
           minidump.walkStack(dumpPath, symbolsPath, function (error, report) {
             if (error) return done(error)
 
-            report = report.toString()
+            assert.equal(Buffer.isBuffer(report), true)
             assert.notEqual(report.length, 0)
+
+            report = report.toString()
             assert.notEqual(report.indexOf('electron.exe!atom::`anonymous namespace\'::Crash [atom_bindings.cc : 27 + 0x0]'), -1)
             done()
           })
@@ -46,7 +50,41 @@ describe('minidump', function () {
       })
     })
   })
+
+  describe('dumpSymbol()', function () {
+    it('calls back with a minidump', function (done) {
+      if (process.platform !== 'darwin') return this.skip()
+
+      downloadElectron(function (error, binaryPath) {
+        if (error) return done(error)
+        minidump.dumpSymbol(binaryPath, function (error, minidump) {
+          if (error) return done(error)
+
+          assert.equal(Buffer.isBuffer(minidump), true)
+          assert.notEqual(minidump.length, 0)
+          done()
+        })
+      })
+    })
+  })
 })
+
+var downloadElectron = function (callback) {
+  electronDownload({
+    version: '1.4.3',
+    arch: 'x64',
+    platform: 'darwin',
+    quiet: true
+  }, function (error, zipPath) {
+    if (error) return callback(error)
+
+    var electronPath = temp.mkdirSync('node-minidump-')
+    extractZip(zipPath, {dir: electronPath}, function (error) {
+      if (error) return callback(error)
+      callback(null, path.join(electronPath, 'Electron.app', 'Contents', 'MacOS', 'Electron'))
+   })
+  })
+}
 
 var downloadElectronSymbols = function (platform, callback) {
   electronDownload({
