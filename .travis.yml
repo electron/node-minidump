@@ -5,6 +5,7 @@ node_js:
 
 os:
 - osx
+- linux
 
 notifications:
   email:
