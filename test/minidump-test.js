@@ -7,7 +7,7 @@ var extractZip = require('extract-zip')
 var temp = require('temp').track()
 
 describe('minidump', function () {
-  this.timeout(60000)
+  this.timeout(3 * 60 * 1000)
 
   describe('walkStack()', function () {
     describe('macOS dump', function () {
