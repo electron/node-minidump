@@ -49,23 +49,6 @@ describe('minidump', function () {
         })
       })
     })
-  })
-
-  describe('dumpSymbol()', function () {
-    it('calls back with a minidump', function (done) {
-      if (process.platform !== 'darwin') return this.skip()
-
-      downloadElectron(function (error, binaryPath) {
-        if (error) return done(error)
-        minidump.dumpSymbol(binaryPath, function (error, minidump) {
-          if (error) return done(error)
-
-          assert.equal(Buffer.isBuffer(minidump), true)
-          assert.notEqual(minidump.length, 0)
-          done()
-        })
-      })
-    })
 
     describe('Linux dump', function () {
       it('calls back with a report', function (done) {
@@ -85,13 +68,30 @@ describe('minidump', function () {
       })
     })
   })
+
+  describe('dumpSymbol()', function () {
+    it('calls back with a minidump', function (done) {
+      if (process.platform === 'win32') return this.skip()
+
+      downloadElectron(function (error, binaryPath) {
+        if (error) return done(error)
+        minidump.dumpSymbol(binaryPath, function (error, minidump) {
+          if (error) return done(error)
+
+          assert.equal(Buffer.isBuffer(minidump), true)
+          assert.notEqual(minidump.length, 0)
+          done()
+        })
+      })
+    })
+  })
 })
 
 var downloadElectron = function (callback) {
   electronDownload({
     version: '1.4.3',
     arch: 'x64',
-    platform: 'darwin',
+    platform: process.platform,
     quiet: true
   }, function (error, zipPath) {
     if (error) return callback(error)
@@ -99,7 +99,12 @@ var downloadElectron = function (callback) {
     var electronPath = temp.mkdirSync('node-minidump-')
     extractZip(zipPath, {dir: electronPath}, function (error) {
       if (error) return callback(error)
-      callback(null, path.join(electronPath, 'Electron.app', 'Contents', 'MacOS', 'Electron'))
+
+      if (process.platform === 'darwin') {
+        callback(null, path.join(electronPath, 'Electron.app', 'Contents', 'MacOS', 'Electron'))
+      } else {
+        callback(null, path.join(electronPath, 'electron'))
+      }
    })
   })
 }
