@@ -7,7 +7,7 @@ var extractZip = require('extract-zip')
 var temp = require('temp').track()
 
 describe('minidump', function () {
-  this.timeout(60000)
+  this.timeout(3 * 60 * 1000)
 
   describe('walkStack()', function () {
     describe('macOS dump', function () {
@@ -49,11 +49,29 @@ describe('minidump', function () {
         })
       })
     })
+
+    describe('Linux dump', function () {
+      it('calls back with a report', function (done) {
+        downloadElectronSymbols('linux', function (error, symbolsPath) {
+          if (error) return done(error)
+
+          var dumpPath = path.join(__dirname, 'fixtures', 'linux.dmp')
+          minidump.walkStack(dumpPath, symbolsPath, function (error, report) {
+            if (error) return done(error)
+
+            report = report.toString()
+            assert.notEqual(report.length, 0)
+            assert.notEqual(report.indexOf('electron!Crash [atom_bindings.cc : 27 + 0x0]'), -1)
+            done()
+          })
+        })
+      })
+    })
   })
 
   describe('dumpSymbol()', function () {
     it('calls back with a minidump', function (done) {
-      if (process.platform !== 'darwin') return this.skip()
+      if (process.platform === 'win32') return this.skip()
 
       downloadElectron(function (error, binaryPath) {
         if (error) return done(error)
@@ -73,7 +91,7 @@ var downloadElectron = function (callback) {
   electronDownload({
     version: '1.4.3',
     arch: 'x64',
-    platform: 'darwin',
+    platform: process.platform,
     quiet: true
   }, function (error, zipPath) {
     if (error) return callback(error)
@@ -81,7 +99,12 @@ var downloadElectron = function (callback) {
     var electronPath = temp.mkdirSync('node-minidump-')
     extractZip(zipPath, {dir: electronPath}, function (error) {
       if (error) return callback(error)
-      callback(null, path.join(electronPath, 'Electron.app', 'Contents', 'MacOS', 'Electron'))
+
+      if (process.platform === 'darwin') {
+        callback(null, path.join(electronPath, 'Electron.app', 'Contents', 'MacOS', 'Electron'))
+      } else {
+        callback(null, path.join(electronPath, 'electron'))
+      }
    })
   })
 }

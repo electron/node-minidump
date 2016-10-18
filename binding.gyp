@@ -8,7 +8,7 @@
         }, {
           'dependencies': [
             'deps/breakpad/breakpad.gyp:minidump_stackwalk',
-            'deps/breakpad/breakpad.gyp:dump_syms',
+            'deps/breakpad/breakpad.gyp:dump_syms#host',
           ],
         }],
       ],

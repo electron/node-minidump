@@ -1,4 +1,5 @@
 .gitmodules
 .npmignore
 .travis.yml
+npm-debug.log
 test
