@@ -6,6 +6,9 @@ var electronDownload = require('electron-download')
 var extractZip = require('extract-zip')
 var temp = require('temp').track()
 
+var describe = global.describe
+var it = global.it
+
 describe('minidump', function () {
   this.timeout(3 * 60 * 1000)
 
@@ -105,7 +108,7 @@ var downloadElectron = function (callback) {
       } else {
         callback(null, path.join(electronPath, 'electron'))
       }
-   })
+    })
   })
 }
 
@@ -123,6 +126,6 @@ var downloadElectronSymbols = function (platform, callback) {
     extractZip(zipPath, {dir: symbolsPath}, function (error) {
       if (error) return callback(error)
       callback(null, path.join(symbolsPath, 'electron.breakpad.syms'))
-   })
+    })
   })
 }
