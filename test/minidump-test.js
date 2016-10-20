@@ -6,6 +6,9 @@ var electronDownload = require('electron-download')
 var extractZip = require('extract-zip')
 var temp = require('temp').track()
 
+var describe = global.describe
+var it = global.it
+
 describe('minidump', function () {
   this.timeout(3 * 60 * 1000)
 
