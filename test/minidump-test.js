@@ -105,7 +105,7 @@ var downloadElectron = function (callback) {
       } else {
         callback(null, path.join(electronPath, 'electron'))
       }
-   })
+    })
   })
 }
 
@@ -123,6 +123,6 @@ var downloadElectronSymbols = function (platform, callback) {
     extractZip(zipPath, {dir: symbolsPath}, function (error) {
       if (error) return callback(error)
       callback(null, path.join(symbolsPath, 'electron.breakpad.syms'))
-   })
+    })
   })
 }
