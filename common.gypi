@@ -7,7 +7,7 @@
   'target_defaults': {
     'conditions': [
       ['OS=="linux"', {
-        'cflags': ['-w'],
+        'cflags': ['-w', '-std=c++0x'],
       }],
       ['OS=="mac"', {
         'xcode_settings': {
