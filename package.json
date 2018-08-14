@@ -2,7 +2,7 @@
   "main": "./lib/minidump.js",
   "name": "minidump",
   "description": "Read and process minidump file",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "bin": {
     "minidump_stackwalk": "bin/minidump_stackwalk"
   },
