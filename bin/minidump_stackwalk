@@ -2,7 +2,7 @@
 var path = require('path');
 var spawn = require('child_process').spawn;
 
-var stackwalk = path.resolve(__dirname, '..', 'build', 'Release', 'minidump_stackwalk');
+var stackwalk = path.resolve(__dirname, '..', 'build', 'src', 'processor', 'minidump_stackwalk');
 var args = process.argv.slice(2);
 var child = spawn(stackwalk, args);
 child.stdout.pipe(process.stdout);
