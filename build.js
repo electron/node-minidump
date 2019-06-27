@@ -17,8 +17,6 @@ spawnSync(path.join(__dirname, 'deps', 'breakpad', 'configure'), [], {
 const targets = ['src/processor/minidump_stackwalk']
 if (process.platform === 'linux') {
   targets.push('src/tools/linux/dump_syms/dump_syms')
-} else if (process.platform === 'darwin') {
-  targets.push('src/tools/mac/dump_syms/dump_syms_mac')
 }
 spawnSync('make', ['-C', buildDir, '-j', require('os').cpus().length, ...targets], {
   stdio: 'inherit'
