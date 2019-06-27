@@ -16,7 +16,7 @@
   },
   "scripts": {
     "test": "mocha test && standard",
-    "install": "mkdir build && cd build && ../deps/breakpad/configure && make -j12 src/processor/minidump_stackwalk"
+    "install": "node build.js"
   },
   "devDependencies": {
     "electron-download": "^3.0.1",
