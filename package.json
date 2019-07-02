@@ -15,7 +15,8 @@
     "url": "https://github.com/electron/node-minidump/issues"
   },
   "scripts": {
-    "test": "mocha test && standard"
+    "test": "mocha test && standard",
+    "install": "node build.js"
   },
   "devDependencies": {
     "electron-download": "^3.0.1",
@@ -23,5 +24,11 @@
     "mocha": "^3.1.2",
     "standard": "^8.4.0",
     "temp": "^0.8.3"
-  }
+  },
+  "files": [
+    "LICENSE.md",
+    "README.md",
+    "/bin",
+    "/lib"
+  ]
 }

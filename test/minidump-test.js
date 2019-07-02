@@ -74,7 +74,7 @@ describe('minidump', function () {
 
   describe('dumpSymbol()', function () {
     it('calls back with a minidump', function (done) {
-      if (process.platform === 'win32') return this.skip()
+      if (process.platform !== 'linux') return this.skip()
 
       downloadElectron(function (error, binaryPath) {
         if (error) return done(error)
