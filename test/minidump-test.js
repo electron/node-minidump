@@ -88,6 +88,44 @@ describe('minidump', function () {
       })
     })
   })
+
+  describe('moduleList()', function () {
+    describe('on a Linux dump', () => {
+      it('calls back with a module list', function (done) {
+        const dumpPath = path.join(__dirname, 'fixtures', 'linux.dmp')
+        minidump.moduleList(dumpPath, (err, modules) => {
+          if (err) return done(err)
+          assert.notEqual(modules.length, 0)
+          assert(modules.some(m => m.name.endsWith('/electron')))
+          done()
+        })
+      })
+    })
+
+    describe('on a Windows dump', () => {
+      it('calls back with a module list', function (done) {
+        const dumpPath = path.join(__dirname, 'fixtures', 'windows.dmp')
+        minidump.moduleList(dumpPath, (err, modules) => {
+          if (err) return done(err)
+          assert.notEqual(modules.length, 0)
+          assert(modules.some(m => m.name.endsWith('\\electron.exe')))
+          done()
+        })
+      })
+    })
+
+    describe('on a macOS dump', () => {
+      it('calls back with a module list', function (done) {
+        const dumpPath = path.join(__dirname, 'fixtures', 'mac.dmp')
+        minidump.moduleList(dumpPath, (err, modules) => {
+          if (err) return done(err)
+          assert.notEqual(modules.length, 0)
+          assert(modules.some(m => m.name.endsWith('/Electron Helper')))
+          done()
+        })
+      })
+    })
+  })
 })
 
 var downloadElectron = function (callback) {
@@ -100,7 +138,7 @@ var downloadElectron = function (callback) {
     if (error) return callback(error)
 
     var electronPath = temp.mkdirSync('node-minidump-')
-    extractZip(zipPath, {dir: electronPath}, function (error) {
+    extractZip(zipPath, { dir: electronPath }, function (error) {
       if (error) return callback(error)
 
       if (process.platform === 'darwin') {
@@ -123,7 +161,7 @@ var downloadElectronSymbols = function (platform, callback) {
     if (error) return callback(error)
 
     var symbolsPath = temp.mkdirSync('node-minidump-')
-    extractZip(zipPath, {dir: symbolsPath}, function (error) {
+    extractZip(zipPath, { dir: symbolsPath }, function (error) {
       if (error) return callback(error)
       callback(null, path.join(symbolsPath, 'electron.breakpad.syms'))
     })

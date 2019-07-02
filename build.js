@@ -1,10 +1,10 @@
 const fs = require('fs')
 const path = require('path')
-const {spawnSync} = require('child_process')
+const { spawnSync } = require('child_process')
 
 const buildDir = path.join(__dirname, 'build')
 if (!fs.existsSync(buildDir)) {
-  fs.mkdirSync(buildDir, {recursive: true})
+  fs.mkdirSync(buildDir, { recursive: true })
 }
 spawnSync(path.join(__dirname, 'deps', 'breakpad', 'configure'), [], {
   cwd: buildDir,
