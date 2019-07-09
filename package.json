@@ -6,6 +6,7 @@
   "bin": {
     "minidump_stackwalk": "bin/minidump_stackwalk"
   },
+  "types": "index.d.ts",
   "license": "MIT",
   "repository": {
     "type": "git",
