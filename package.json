@@ -30,6 +30,7 @@
     "LICENSE.md",
     "README.md",
     "/bin",
-    "/lib"
+    "/lib",
+    "index.d.ts"
   ]
 }
