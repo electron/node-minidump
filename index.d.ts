@@ -27,3 +27,15 @@ export function dumpSymbol(
   binaryPath: string,
   callback: (err: Error, result: string) => void
 ): void
+
+type ModuleInfo = {
+  version: string
+  name: string
+  pdb_file_name?: string
+  debug_identifier?: string
+}
+
+export function moduleList(
+  minidump: string,
+  callback: (err: Error, result: ModuleInfo[]) => void
+): void
