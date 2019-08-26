@@ -31,6 +31,8 @@
     "README.md",
     "/bin",
     "/lib",
-    "index.d.ts"
+    "index.d.ts",
+    "build.js",
+    "deps"
   ]
 }
