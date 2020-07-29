@@ -14,7 +14,7 @@ spawnSync(path.join(__dirname, 'deps', 'breakpad', 'configure'), [], {
   },
   stdio: 'inherit'
 })
-const targets = ['src/processor/minidump_stackwalk']
+const targets = ['src/processor/minidump_stackwalk', 'src/processor/minidump_dump']
 if (process.platform === 'linux') {
   targets.push('src/tools/linux/dump_syms/dump_syms')
 }
