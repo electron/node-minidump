@@ -89,6 +89,17 @@ describe('minidump', function () {
     })
   })
 
+  describe('dump()', function() {
+    it('calls back with minidump info', function (done) {
+      minidump.dump(path.join(__dirname, 'fixtures', 'linux.dmp'), (err, rep) => {
+        const report = rep.toString('utf8')
+        assert.notEqual(report.length, 0)
+        assert.notEqual(report.indexOf('libXss.so.1.0.0'), -1)
+        done()
+      })
+    })
+  })
+
   describe('moduleList()', function () {
     describe('on a Linux dump', () => {
       it('calls back with a module list', function (done) {
