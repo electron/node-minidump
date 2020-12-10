@@ -20,7 +20,8 @@
     "test": "mocha test && standard",
     "build": "node build.js",
     "submodule": "git submodule update --recursive --init",
-    "prepare": "npm run submodule && npm run build"
+    "prepare": "npm run submodule && npm run build",
+    "postinstall": "npm run build"
   },
   "devDependencies": {
     "electron-download": "^3.0.1",
