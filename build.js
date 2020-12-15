@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const childProcess = require('child_process')
 
-function spawnSync(...args) {
+function spawnSync (...args) {
   const result = childProcess.spawnSync(...args)
   if (result.status !== 0) {
     process.exit(result.status)
