@@ -8,10 +8,6 @@ if (!fs.existsSync(buildDir)) {
 }
 
 let includes = `-I${path.relative(buildDir, path.join(__dirname, 'deps'))}`
-if (process.platform === 'darwin') {
-  // needed for `#include "common/*.h"` in `src/tools/mac/dump_syms/dump_syms_tool`
-  includes = includes + ` -I${path.relative(buildDir, path.join(__dirname, 'deps', 'breakpad', 'src'))}`
-}
 
 spawnSync(path.join(__dirname, 'deps', 'breakpad', 'configure'), [], {
   cwd: buildDir,
@@ -25,10 +21,13 @@ const targets = ['src/processor/minidump_stackwalk', 'src/processor/minidump_dum
 if (process.platform === 'linux') {
   targets.push('src/tools/linux/dump_syms/dump_syms')
 }
-if (process.platform === 'darwin') {
-  targets.push('src/tools/mac/dump_syms/dump_syms_tool')
-}
 
 spawnSync('make', [includes, '-C', buildDir, '-j', require('os').cpus().length, ...targets], {
   stdio: 'inherit'
 })
+
+if (process.platform === 'darwin') {
+  spawnSync('xcodebuild', ['-project', path.join(__dirname, 'deps', 'breakpad', 'src', 'tools', 'mac', 'dump_syms', 'dump_syms.xcodeproj'), 'build'], {
+    stdio: 'inherit'
+  })
+}
