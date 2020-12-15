@@ -9,13 +9,13 @@ export function addSymbolPath(...paths: string[]): void
  */
 export function walkStack(
   minidump: string,
-  callback: (err: Error, result: string) => void,
+  callback: (err: Error, result: Buffer) => void,
   commandArgs?: string[]
 ): void
 export function walkStack(
   minidump: string,
   symbolPaths: string[],
-  callback: (err: Error, result: string) => void,
+  callback: (err: Error, result: Buffer) => void,
   commandArgs?: string[]
 ): void
 
