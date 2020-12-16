@@ -14,13 +14,11 @@ if (!fs.existsSync(buildDir)) {
   fs.mkdirSync(buildDir, { recursive: true })
 }
 
-let includes = `-I${path.relative(buildDir, path.join(__dirname, 'deps'))}`
-
 spawnSync(path.join(__dirname, 'deps', 'breakpad', 'configure'), [], {
   cwd: buildDir,
   env: {
     ...process.env,
-    CPPFLAGS: includes
+    CPPFLAGS: `-I${path.relative(buildDir, path.join(__dirname, 'deps'))}`
   },
   stdio: 'inherit'
 })
