@@ -6,7 +6,7 @@
 npm install minidump
 ```
 
-## Building
+## Building (for development)
 
 * `git clone --recurse-submodules https://github.com/electron/node-minidump`
 * `npm install`
