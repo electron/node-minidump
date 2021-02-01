@@ -2,6 +2,23 @@ const fs = require('fs')
 const path = require('path')
 const childProcess = require('child_process')
 
+// exe paths
+const exe = process.platform === 'win32' ? '.exe' : ''
+const minidumpStackwalk = path.resolve(__dirname, 'build', 'src', 'processor', 'minidump_stackwalk') + exe
+const minidumpDump = path.resolve(__dirname, 'build', 'src', 'processor', 'minidump_dump') + exe
+const dumpSyms = (() => {
+  if (process.platform === 'darwin') {
+    return path.resolve(__dirname, 'deps', 'breakpad', 'src', 'tools', 'mac', 'dump_syms', 'build', 'Release', 'dump_syms')
+  } else if (process.platform === 'linux') {
+    return path.resolve(__dirname, 'build', 'src', 'tools', 'linux', 'dump_syms', 'dump_syms')
+  }
+})()
+
+// do not build if executables already exist
+if (fs.existsSync(minidumpStackwalk) && fs.existsSync(minidumpDump) && fs.existsSync(dumpSyms)) {
+  process.exit(0)
+}
+
 function spawnSync (...args) {
   const result = childProcess.spawnSync(...args)
   if (result.status !== 0) {
