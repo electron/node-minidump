@@ -60,11 +60,9 @@ if (!fs.existsSync(binDir)) {
 
 const minidumpStackwalk = path.resolve(__dirname, 'build', 'src', 'processor', 'minidump_stackwalk') + exe
 fs.copyFileSync(minidumpStackwalk, minidumpStackwalkDest)
-fs.chmodSync(minidumpStackwalkDest, 0o755)
 
 const minidumpDump = path.resolve(__dirname, 'build', 'src', 'processor', 'minidump_dump') + exe
 fs.copyFileSync(minidumpDump, minidumpDumpDest)
-fs.chmodSync(minidumpDumpDest, 0o755)
 
 const dumpSyms = (() => {
   if (process.platform === 'darwin') {
@@ -74,4 +72,3 @@ const dumpSyms = (() => {
   }
 })()
 fs.copyFileSync(dumpSyms, dumpSymsDest)
-fs.chmodSync(dumpSymsDest, 0o755)
