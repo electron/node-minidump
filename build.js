@@ -3,7 +3,7 @@ const path = require('path')
 const childProcess = require('child_process')
 
 const exe = process.platform === 'win32' ? '.exe' : ''
-const binDir = path.join(__dirname, 'bin', process.platform)
+const binDir = path.join(__dirname, 'bin', `${process.platform}-${process.arch}`)
 
 const minidumpStackwalkDest = path.join(binDir, 'minidump_stackwalk') + exe
 const minidumpDumpDest = path.join(binDir, 'minidump_dump') + exe
