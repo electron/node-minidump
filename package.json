@@ -34,6 +34,7 @@
     "/lib",
     "index.d.ts",
     "build.js",
-    "deps"
+    "deps",
+    "bin"
   ]
 }
