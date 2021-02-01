@@ -1,4 +1,6 @@
-# minidump - Process minidump files [![Build Status](https://travis-ci.org/electron/node-minidump.svg?branch=master)](https://travis-ci.org/electron/node-minidump)
+# minidump - Process minidump files
+
+![CI](https://github.com/electron/node-minidump/workflows/CI/badge.svg)
 
 ## Installing
 
