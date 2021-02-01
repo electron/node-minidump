@@ -35,10 +35,6 @@
     "index.d.ts",
     "build.js",
     "deps",
-    "./build/src/processor/minidump_stackwalk",
-    "./build/src/processor/minidump_stackwalk.exe",
-    "./build/src/processor/minidump_dump",
-    "./build/src/processor/minidump_dump.exe",
-    "./build/src/tools/linux/dump_syms/dump_syms"
+    "bin"
   ]
 }

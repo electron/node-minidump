@@ -2,20 +2,19 @@ const fs = require('fs')
 const path = require('path')
 const childProcess = require('child_process')
 
-// exe paths
 const exe = process.platform === 'win32' ? '.exe' : ''
-const minidumpStackwalk = path.resolve(__dirname, 'build', 'src', 'processor', 'minidump_stackwalk') + exe
-const minidumpDump = path.resolve(__dirname, 'build', 'src', 'processor', 'minidump_dump') + exe
-const dumpSyms = (() => {
-  if (process.platform === 'darwin') {
-    return path.resolve(__dirname, 'deps', 'breakpad', 'src', 'tools', 'mac', 'dump_syms', 'build', 'Release', 'dump_syms')
-  } else if (process.platform === 'linux') {
-    return path.resolve(__dirname, 'build', 'src', 'tools', 'linux', 'dump_syms', 'dump_syms')
-  }
-})()
+const binDir = path.join(__dirname, 'bin', process.platform)
+
+const minidumpStackwalkDest = path.join(binDir, 'minidump_stackwalk') + exe
+const minidumpDumpDest = path.join(binDir, 'minidump_dump') + exe
+const dumpSymsDest = path.join(binDir, 'dump_syms') + exe
 
 // do not build if executables already exist
-if (fs.existsSync(minidumpStackwalk) && fs.existsSync(minidumpDump) && fs.existsSync(dumpSyms)) {
+if (
+  fs.existsSync(minidumpStackwalkDest) &&
+  fs.existsSync(minidumpDumpDest) &&
+  fs.existsSync(dumpSymsDest)
+) {
   process.exit(0)
 }
 
@@ -53,3 +52,23 @@ if (process.platform === 'darwin') {
     stdio: 'inherit'
   })
 }
+
+// copy to bin folder
+if (!fs.existsSync(binDir)) {
+  fs.mkdirSync(binDir, { recursive: true })
+}
+
+const minidumpStackwalk = path.resolve(__dirname, 'build', 'src', 'processor', 'minidump_stackwalk') + exe
+fs.copyFileSync(minidumpStackwalk, minidumpStackwalkDest)
+
+const minidumpDump = path.resolve(__dirname, 'build', 'src', 'processor', 'minidump_dump') + exe
+fs.copyFileSync(minidumpDump, minidumpDumpDest)
+
+const dumpSyms = (() => {
+  if (process.platform === 'darwin') {
+    return path.resolve(__dirname, 'deps', 'breakpad', 'src', 'tools', 'mac', 'dump_syms', 'build', 'Release', 'dump_syms')
+  } else if (process.platform === 'linux') {
+    return path.resolve(__dirname, 'build', 'src', 'tools', 'linux', 'dump_syms', 'dump_syms')
+  }
+})()
+fs.copyFileSync(dumpSyms, dumpSymsDest)
