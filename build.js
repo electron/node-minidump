@@ -72,3 +72,9 @@ const dumpSyms = (() => {
   }
 })()
 fs.copyFileSync(dumpSyms, dumpSymsDest)
+
+fs.readdirSync(binDir).forEach(file => stripBin(path.join(binDir, file)))
+
+function stripBin (file) {
+  return childProcess.execFileSync(process.env.STRIP || 'strip', [file, process.platform === 'darwin' ? '-Sx' : '--strip-all'])
+}
