@@ -20,6 +20,16 @@ export function walkStack(
 ): void
 
 /**
+ * Get the contents of the minidump file in somewhat readable text(not yet symbolicated).
+ * The `callback` would be called with `callback(error, report)` upon completion.
+ */
+export function dump(
+  minidump: string,
+  callback: (err: Error, result: Buffer) => void,
+  commandArgs?: string[],
+): void
+
+/**
  * Dump debug symbols in minidump format from `binaryPath`
  * The `callback` would be called with `callback(error, minidump)` upon completion.
  */
