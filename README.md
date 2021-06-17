@@ -40,7 +40,7 @@ be called with `callback(error, minidump)` upon completion.
 
 ## Releasing a new npm version
 - Change the version in `package.json`, make a new git tag, and push it to GitHub.
-- Wait until the GitHub Actions on the master branch pass.
+- Wait until the GitHub Actions on the main branch pass.
 - The artifacts of the latest GitHub Action run should be downloaded and placed under the `bin` folder
   (replacing the old folder if it exists).
 
