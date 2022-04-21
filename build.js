@@ -20,6 +20,7 @@ if (
 
 function spawnSync (...args) {
   const result = childProcess.spawnSync(...args)
+  if (result.error) throw result.error
   if (result.status !== 0) {
     process.exit(result.status)
   }
