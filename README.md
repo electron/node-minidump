@@ -39,6 +39,9 @@ be called with `callback(error, minidump)` upon completion.
 
 
 ## Releasing a new npm version
+- Ensure you have checked out the `deps/breakpad` submodule. If you don't check
+  this out, then the source code of breakpad will not be included in the npm
+  package, and it will not be possible to build from source.
 - Change the version in `package.json`, make a new git tag, and push it to GitHub.
 - Wait until the GitHub Actions on the main branch pass.
 - The artifacts of the latest GitHub Action run should be downloaded and placed under the `bin` folder
