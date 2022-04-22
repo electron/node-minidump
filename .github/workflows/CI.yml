@@ -27,10 +27,14 @@ jobs:
           node-version: ${{ matrix.node_version }}
 
       - name: Install dependencies and build
-        run: npm install
+        run: yarn
+
+      - name: Build altenative architecture
+        if: matrix.os == 'macos-latest'
+        run: MINIDUMP_BUILD_ARCH=arm64 node build.js
 
       - name: Tests
-        run: npm run test
+        run: yarn test
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
