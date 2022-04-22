@@ -1,9 +1,10 @@
 const fs = require('fs')
 const path = require('path')
 const childProcess = require('child_process')
+const { getEffectiveArch } = require('./lib/arch')
 
 const exe = process.platform === 'win32' ? '.exe' : ''
-const binDir = path.join(__dirname, 'bin', `${process.platform}-${process.arch}`)
+const binDir = path.join(__dirname, 'bin', `${process.platform}-${getEffectiveArch()}`)
 
 const minidumpStackwalkDest = path.join(binDir, 'minidump_stackwalk') + exe
 const minidumpDumpDest = path.join(binDir, 'minidump_dump') + exe
@@ -26,16 +27,24 @@ function spawnSync (...args) {
   }
 }
 
-const buildDir = path.join(__dirname, 'build')
+const buildDir = path.join(__dirname, 'build', getEffectiveArch())
 if (!fs.existsSync(buildDir)) {
   fs.mkdirSync(buildDir, { recursive: true })
 }
 
-spawnSync(path.join(__dirname, 'deps', 'breakpad', 'configure'), [], {
+let overrideArch = ''
+let crossCompileHost = ''
+if (getEffectiveArch() !== process.arch && process.platform === 'darwin') {
+  overrideArch = getEffectiveArch() === 'arm64' ? 'arm64' : 'x86_64'
+  crossCompileHost = 'x86_64-apple-darwin20.6.0'
+}
+
+spawnSync(path.join(__dirname, 'deps', 'breakpad', 'configure'), crossCompileHost ? [`--host=${crossCompileHost}`] : [], {
   cwd: buildDir,
   env: {
     ...process.env,
-    CPPFLAGS: `-I${path.relative(buildDir, path.join(__dirname, 'deps'))}`
+    CPPFLAGS: [`-I${path.relative(buildDir, path.join(__dirname, 'deps'))}`, ...(overrideArch ? [`-arch ${overrideArch}`] : [])].join(' '),
+    LDFLAGS: overrideArch ? `-arch ${overrideArch}` : undefined
   },
   stdio: 'inherit'
 })
@@ -59,23 +68,33 @@ if (!fs.existsSync(binDir)) {
   fs.mkdirSync(binDir, { recursive: true })
 }
 
-const minidumpStackwalk = path.resolve(__dirname, 'build', 'src', 'processor', 'minidump_stackwalk') + exe
+const minidumpStackwalk = path.resolve(buildDir, 'src', 'processor', 'minidump_stackwalk') + exe
 fs.copyFileSync(minidumpStackwalk, minidumpStackwalkDest)
 
-const minidumpDump = path.resolve(__dirname, 'build', 'src', 'processor', 'minidump_dump') + exe
+const minidumpDump = path.resolve(buildDir, 'src', 'processor', 'minidump_dump') + exe
 fs.copyFileSync(minidumpDump, minidumpDumpDest)
 
 const dumpSyms = (() => {
   if (process.platform === 'darwin') {
     return path.resolve(__dirname, 'deps', 'breakpad', 'src', 'tools', 'mac', 'dump_syms', 'build', 'Release', 'dump_syms')
   } else if (process.platform === 'linux') {
-    return path.resolve(__dirname, 'build', 'src', 'tools', 'linux', 'dump_syms', 'dump_syms')
+    return path.resolve(buildDir, 'src', 'tools', 'linux', 'dump_syms', 'dump_syms')
   }
 })()
 fs.copyFileSync(dumpSyms, dumpSymsDest)
 
-fs.readdirSync(binDir).forEach(file => stripBin(path.join(binDir, file)))
+fs.readdirSync(binDir).forEach(file => {
+  const absFile = path.join(binDir, file)
+  stripBin(absFile)
+  maybeSignBin(absFile)
+})
 
 function stripBin (file) {
   return childProcess.execFileSync(process.env.STRIP || 'strip', [file, process.platform === 'darwin' ? '-Sx' : '--strip-all'])
+}
+
+function maybeSignBin (file) {
+  if (process.platform !== 'darwin') return
+
+  return childProcess.execFileSync('codesign', ['--sign', '-', '--force', '--preserve-metadata=entitlements,requirements,flags,runtime', file])
 }
