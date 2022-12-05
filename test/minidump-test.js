@@ -1,13 +1,13 @@
-var assert = require('assert')
-var path = require('path')
+const assert = require('assert')
+const path = require('path')
 
-var minidump = require('..')
-var electronDownload = require('electron-download')
-var extractZip = require('extract-zip')
-var temp = require('temp').track()
+const minidump = require('..')
+const electronDownload = require('electron-download')
+const extractZip = require('extract-zip')
+const temp = require('temp').track()
 
-var describe = global.describe
-var it = global.it
+const describe = global.describe
+const it = global.it
 
 describe('minidump', function () {
   this.timeout(3 * 60 * 1000)
@@ -18,7 +18,7 @@ describe('minidump', function () {
         downloadElectronSymbols('darwin', function (error, symbolsPath) {
           if (error) return done(error)
 
-          var dumpPath = path.join(__dirname, 'fixtures', 'mac.dmp')
+          const dumpPath = path.join(__dirname, 'fixtures', 'mac.dmp')
           minidump.walkStack(dumpPath, symbolsPath, function (error, report) {
             if (error) return done(error)
 
@@ -38,7 +38,7 @@ describe('minidump', function () {
         downloadElectronSymbols('win32', function (error, symbolsPath) {
           if (error) return done(error)
 
-          var dumpPath = path.join(__dirname, 'fixtures', 'windows.dmp')
+          const dumpPath = path.join(__dirname, 'fixtures', 'windows.dmp')
           minidump.walkStack(dumpPath, symbolsPath, function (error, report) {
             if (error) return done(error)
 
@@ -58,7 +58,7 @@ describe('minidump', function () {
         downloadElectronSymbols('linux', function (error, symbolsPath) {
           if (error) return done(error)
 
-          var dumpPath = path.join(__dirname, 'fixtures', 'linux.dmp')
+          const dumpPath = path.join(__dirname, 'fixtures', 'linux.dmp')
           minidump.walkStack(dumpPath, symbolsPath, function (error, report) {
             if (error) return done(error)
 
@@ -140,7 +140,7 @@ describe('minidump', function () {
   })
 })
 
-var downloadElectron = function (callback) {
+function downloadElectron (callback) {
   electronDownload({
     version: '1.4.3',
     arch: 'x64',
@@ -149,7 +149,7 @@ var downloadElectron = function (callback) {
   }, function (error, zipPath) {
     if (error) return callback(error)
 
-    var electronPath = temp.mkdirSync('node-minidump-')
+    const electronPath = temp.mkdirSync('node-minidump-')
     extractZip(zipPath, { dir: electronPath }, function (error) {
       if (error) return callback(error)
 
@@ -162,17 +162,17 @@ var downloadElectron = function (callback) {
   })
 }
 
-var downloadElectronSymbols = function (platform, callback) {
+function downloadElectronSymbols (platform, callback) {
   electronDownload({
     version: '1.4.3', // Dumps were generated with Electron 1.4.3 x64
     arch: 'x64',
-    platform: platform,
+    platform,
     symbols: true,
     quiet: true
   }, function (error, zipPath) {
     if (error) return callback(error)
 
-    var symbolsPath = temp.mkdirSync('node-minidump-')
+    const symbolsPath = temp.mkdirSync('node-minidump-')
     extractZip(zipPath, { dir: symbolsPath }, function (error) {
       if (error) return callback(error)
       callback(null, path.join(symbolsPath, 'electron.breakpad.syms'))
