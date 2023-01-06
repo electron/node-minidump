@@ -15,14 +15,14 @@ jobs:
           - macos-latest
           # - windows-latest
         node_version:
-          - 12
+          - 16
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6  # tag: v2
         with:
           submodules: recursive
 
       - name: Install Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@1f8c6b94b26d0feae1e387ca63ccbdc44d27b561  # tag: v2
         with:
           node-version: ${{ matrix.node_version }}
 
@@ -37,7 +37,7 @@ jobs:
         run: yarn test
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2  # tag: v2
         with:
           path: ./bin
 
