@@ -1,6 +1,6 @@
 # minidump - Process minidump files
 
-![CI](https://github.com/electron/node-minidump/workflows/CI/badge.svg)
+[![CI](https://github.com/electron/node-minidump/actions/workflows/CI.yml/badge.svg)](https://github.com/electron/node-minidump/actions/workflows/CI.yml)
 
 ## Installing
 
