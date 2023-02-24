@@ -1,6 +1,7 @@
 # minidump - Process minidump files
 
 [![CI](https://github.com/electron/node-minidump/actions/workflows/CI.yml/badge.svg)](https://github.com/electron/node-minidump/actions/workflows/CI.yml)
+[![npm version](http://img.shields.io/npm/v/minidump.svg)](https://npmjs.org/package/minidump)
 
 ## Installing
 
