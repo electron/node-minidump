@@ -12,7 +12,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - macos-12
+          - macos-latest
           # - windows-latest
         node_version:
           - 16
@@ -25,6 +25,10 @@ jobs:
         uses: actions/setup-node@1f8c6b94b26d0feae1e387ca63ccbdc44d27b561  # tag: v2
         with:
           node-version: ${{ matrix.node_version }}
+
+      - name: Select Xcode
+        if: matrix.os == 'macos-latest'
+        run: sudo xcode-select -switch /Applications/Xcode_13.4.1.app && /usr/bin/xcodebuild -version
 
       - name: Install dependencies and build
         run: yarn
