@@ -26,6 +26,10 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
 
+      - name: Select Xcode
+        if: matrix.os == 'macos-latest'
+        run: sudo xcode-select -switch /Applications/Xcode_13.4.1.app && /usr/bin/xcodebuild -version
+
       - name: Install dependencies and build
         run: yarn
 
