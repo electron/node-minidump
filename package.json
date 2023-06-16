@@ -13,9 +13,10 @@
     "url": "https://github.com/electron/node-minidump/issues"
   },
   "scripts": {
-    "test": "mocha test && standard",
     "prepublishOnly": "shx chmod -R +x ./bin",
-    "preinstall": "node build.js"
+    "preinstall": "yarn submodule && node build.js",
+    "submodule": "git submodule update --init --recursive",
+    "test": "mocha test && standard"
   },
   "devDependencies": {
     "electron-download": "^3.0.1",
