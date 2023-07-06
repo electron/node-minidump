@@ -1,6 +1,6 @@
 # minidump - Process minidump files
 
-[![CI](https://github.com/electron/node-minidump/actions/workflows/CI.yml/badge.svg)](https://github.com/electron/node-minidump/actions/workflows/CI.yml)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/electron/node-minidump/tree/main.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/electron/node-minidump/tree/main)
 [![npm version](http://img.shields.io/npm/v/minidump.svg)](https://npmjs.org/package/minidump)
 
 ## Installing
@@ -44,8 +44,8 @@ be called with `callback(error, minidump)` upon completion.
   this out, then the source code of breakpad will not be included in the npm
   package, and it will not be possible to build from source.
 - Change the version in `package.json`, make a new git tag, and push it to GitHub.
-- Wait until the GitHub Actions on the main branch pass.
-- The artifacts of the latest GitHub Action run should be downloaded and placed under the `bin` folder
+- Wait until the CircleCI jobs on the main branch pass.
+- The artifacts of the latest CircleCI jobs run should be downloaded and placed under the `bin` folder
   (replacing the old folder if it exists).
 
 	The bin folder should look like the following.
