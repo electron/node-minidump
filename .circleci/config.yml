@@ -117,6 +117,9 @@ workflows:
       #           - 16.19.0
       #           - 14.19.0
       - cfa/release:
+          prepare:
+            - attach_workspace:
+                at: .
           requires:
             - test-linux
             - test-mac
