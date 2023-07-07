@@ -104,20 +104,13 @@ workflows:
       #           - 18.14.0
       #           - 16.19.0
       #           - 14.19.0
-      # TODO: uncomment this once CFA releases are set up
-      # - cfa/release:
-      #     requires:
-      #       - test-linux-18.14.0
-      #       - test-linux-16.19.0
-      #       - test-linux-14.19.0
-      #       - test-mac-18.14.0
-      #       - test-mac-16.19.0
-      #       - test-mac-14.19.0
-      #       - test-windows-18.14.0
-      #       - test-windows-16.19.0
-      #       - test-windows-14.19.0
-      #     filters:
-      #       branches:
-      #         only:
-      #           - main
-      #     context: cfa-release
+      - cfa/release:
+          requires:
+            - test-linux
+            - test-mac
+            # - test-windows
+          filters:
+            branches:
+              only:
+                - main
+          context: cfa-release
