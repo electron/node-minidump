@@ -47,6 +47,10 @@ jobs:
       - run: npx yarn test
       - store_artifacts:
           path: ./bin
+      - persist_to_workspace:
+          root: .
+          paths:
+            - bin
   test-mac:
     macos:
       xcode: 13.4.1
@@ -64,6 +68,10 @@ jobs:
       - run: npx yarn test
       - store_artifacts:
           path: ./bin
+      - persist_to_workspace:
+          root: .
+          paths:
+            - bin
   test-windows:
     executor:
       name: win/default
@@ -78,6 +86,10 @@ jobs:
       - run: npx yarn test
       - store_artifacts:
           path: ./bin
+      - persist_to_workspace:
+          root: .
+          paths:
+            - bin
 
 workflows:
   test_and_release:
