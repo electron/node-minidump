@@ -2,7 +2,7 @@
   "main": "./lib/minidump.js",
   "name": "minidump",
   "description": "Read and process minidump file",
-  "version": "0.25.0",
+  "version": "0.0.0-development",
   "types": "index.d.ts",
   "license": "MIT",
   "repository": {
