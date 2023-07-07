@@ -118,6 +118,9 @@ workflows:
       #           - 14.19.0
       - cfa/release:
           prepare:
+            - run:
+                name: Init git submodules
+                command: git submodule update --init --recursive
             - attach_workspace:
                 at: .
           requires:
