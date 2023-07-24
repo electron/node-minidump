@@ -97,13 +97,13 @@ workflows:
                 - 18.14.0
                 - 16.19.0
                 - 14.19.0
-      # - test-windows:
-      #     matrix:
-      #       parameters:
-      #         node-version:
-      #           - 18.14.0
-      #           - 16.19.0
-      #           - 14.19.0
+      - test-windows:
+          matrix:
+            parameters:
+              node-version:
+                - 18.14.0
+                - 16.19.0
+                - 14.19.0
       # TODO: uncomment this once CFA releases are set up
       # - cfa/release:
       #     requires:
