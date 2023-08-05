@@ -2,7 +2,7 @@ const assert = require('assert')
 const path = require('path')
 
 const minidump = require('..')
-const electronDownload = require('electron-download')
+const { download, downloadArtifact } = require('@electron/get')
 const extractZip = require('extract-zip')
 const temp = require('temp').track()
 
@@ -141,14 +141,12 @@ describe('minidump', function () {
 })
 
 function downloadElectron (callback) {
-  electronDownload({
-    version: '1.4.3',
-    arch: 'x64',
-    platform: process.platform,
-    quiet: true
-  }, function (error, zipPath) {
-    if (error) return callback(error)
-
+  download('1.4.3', {
+    cacheRoot: path.resolve(__dirname, '.cache'),
+    downloadOptions: {
+      quiet: true
+    }
+  }).then((zipPath) => {
     const electronPath = temp.mkdirSync('node-minidump-')
     extractZip(zipPath, { dir: electronPath }, function (error) {
       if (error) return callback(error)
@@ -159,23 +157,29 @@ function downloadElectron (callback) {
         callback(null, path.join(electronPath, 'electron'))
       }
     })
+  }).catch((error) => {
+    callback(error)
   })
 }
 
 function downloadElectronSymbols (platform, callback) {
-  electronDownload({
+  downloadArtifact({
+    cacheRoot: path.resolve(__dirname, '.cache'),
     version: '1.4.3', // Dumps were generated with Electron 1.4.3 x64
     arch: 'x64',
     platform,
-    symbols: true,
-    quiet: true
-  }, function (error, zipPath) {
-    if (error) return callback(error)
-
+    artifactName: 'electron',
+    artifactSuffix: 'symbols',
+    downloadOptions: {
+      quiet: true
+    }
+  }).then((zipPath) => {
     const symbolsPath = temp.mkdirSync('node-minidump-')
     extractZip(zipPath, { dir: symbolsPath }, function (error) {
       if (error) return callback(error)
       callback(null, path.join(symbolsPath, 'electron.breakpad.syms'))
     })
+  }).catch((error) => {
+    callback(error)
   })
 }
