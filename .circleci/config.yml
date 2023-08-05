@@ -23,15 +23,15 @@ commands:
           command: git submodule update --init --recursive
       - restore_cache:
           keys:
-            - v1-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}
-            - v1-dependencies-{{ arch }}
+            - v2-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}
+            - v2-dependencies-{{ arch }}
       - run:
           name: Install dependencies and build
           command: npx yarn install --frozen-lockfile
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}
+          key: v2-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}
 
 jobs:
   test-linux:
