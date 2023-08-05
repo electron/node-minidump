@@ -19,6 +19,7 @@
     "test": "mocha test && standard"
   },
   "devDependencies": {
+    "@continuous-auth/semantic-release-npm": "^3.0.0",
     "@electron/get": "^2.0.2",
     "extract-zip": "^1.5.0",
     "mocha": "^10.1.0",
