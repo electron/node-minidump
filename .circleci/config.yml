@@ -126,16 +126,16 @@ workflows:
       #           - 18.14.0
       #           - 16.19.0
       #           - 14.19.0
-      - release-linux
-          # filters:
-          #   branches:
-          #     only:
-          #       - main
-      - release-mac
-          # filters:
-          #   branches:
-          #     only:
-          #       - main
+      - release-linux:
+          filters:
+            branches:
+              only:
+                - main
+      - release-mac:
+          filters:
+            branches:
+              only:
+                - main
       - cfa/release:
           prepare:
             - run:
