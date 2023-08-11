@@ -45,12 +45,6 @@ jobs:
       - install:
           node-version: << parameters.node-version >>
       - run: npx yarn test
-      - store_artifacts:
-          path: ./bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - bin
   test-mac:
     macos:
       xcode: 13.4.1
@@ -66,12 +60,6 @@ jobs:
           name: Build alternative architecture
           command: MINIDUMP_BUILD_ARCH=arm64 node build.js
       - run: npx yarn test
-      - store_artifacts:
-          path: ./bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - bin
   test-windows:
     executor:
       name: win/default
@@ -84,6 +72,28 @@ jobs:
       - install:
           node-version: << parameters.node-version >>
       - run: npx yarn test
+  release-linux:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - install:
+          node-version: 18.17.1
+      - store_artifacts:
+          path: ./bin
+      - persist_to_workspace:
+          root: .
+          paths:
+            - bin
+  release-mac:
+    macos:
+      xcode: 13.4.1
+    resource_class: macos.x86.medium.gen2
+    steps:
+      - install:
+          node-version: 18.17.1
+      - run:
+          name: Build alternative architecture
+          command: MINIDUMP_BUILD_ARCH=arm64 node build.js
       - store_artifacts:
           path: ./bin
       - persist_to_workspace:
@@ -116,6 +126,16 @@ workflows:
       #           - 18.14.0
       #           - 16.19.0
       #           - 14.19.0
+      - release-linux
+          # filters:
+          #   branches:
+          #     only:
+          #       - main
+      - release-mac
+          # filters:
+          #   branches:
+          #     only:
+          #       - main
       - cfa/release:
           prepare:
             - run:
@@ -127,6 +147,8 @@ workflows:
             - test-linux
             - test-mac
             # - test-windows
+            - release-linux
+            - release-mac
           filters:
             branches:
               only:
