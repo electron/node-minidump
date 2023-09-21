@@ -1,3 +1,4 @@
 [submodule "deps/breakpad"]
 	path = deps/breakpad
 	url = https://chromium.googlesource.com/breakpad/breakpad
+        ignore = untracked
