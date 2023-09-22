@@ -49,7 +49,7 @@ jobs:
           path: ./bin
   test-mac:
     macos:
-      xcode: 14.2.0
+      xcode: 14.3.1
     resource_class: macos.x86.medium.gen2
     parameters:
       node-version:
