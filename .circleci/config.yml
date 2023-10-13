@@ -2,98 +2,26 @@ version: 2.1
 
 orbs:
   cfa: continuousauth/npm@1.0.2
-  node: circleci/node@5.1.0
-  win: circleci/windows@5.0.0
-
-commands:
-  install:
-    parameters:
-      node-version:
-        description: Node.js version to install
-        type: string
-    steps:
-      - run: git config --global core.autocrlf input
-      - node/install:
-          node-version: << parameters.node-version >>
-      - run: nvm use << parameters.node-version >>
-      # Can't get yarn installed on Windows with the circleci/node orb, so use npx yarn for commands
-      - checkout
-      - run:
-          name: Init git submodules
-          command: git submodule update --init --recursive
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}
-            - v2-dependencies-{{ arch }}
-      - run:
-          name: Install dependencies and build
-          command: npx yarn install --frozen-lockfile
-      - save_cache:
-          paths:
-            - node_modules
-          key: v2-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}
+  node: electronjs/node@1.4.1
 
 jobs:
-  test-linux:
-    docker:
-      - image: cimg/base:stable
+  release:
+    executor: << parameters.executor >>
     parameters:
-      node-version:
-        description: Node.js version to install
-        type: string
+      executor:
+        type: executor
     steps:
-      - install:
-          node-version: << parameters.node-version >>
-      - run: npx yarn test
-  test-mac:
-    macos:
-      xcode: 14.3.1
-    resource_class: macos.x86.medium.gen2
-    parameters:
-      node-version:
-        description: Node.js version to install
-        type: string
-    steps:
-      - install:
-          node-version: << parameters.node-version >>
-      - run:
-          name: Build alternative architecture
-          command: MINIDUMP_BUILD_ARCH=arm64 node build.js
-      - run: npx yarn test
-  test-windows:
-    executor:
-      name: win/default
-      shell: bash.exe
-    parameters:
-      node-version:
-        description: Node.js version to install
-        type: string
-    steps:
-      - install:
-          node-version: << parameters.node-version >>
-      - run: npx yarn test
-  release-linux:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - install:
-          node-version: 18.17.1
-      - store_artifacts:
-          path: ./bin
-      - persist_to_workspace:
-          root: .
-          paths:
-            - bin
-  release-mac:
-    macos:
-      xcode: 14.3.1
-    resource_class: macos.x86.medium.gen2
-    steps:
-      - install:
-          node-version: 18.17.1
-      - run:
-          name: Build alternative architecture
-          command: MINIDUMP_BUILD_ARCH=arm64 node build.js
+      - node/install:
+          node-version: '18.18'
+      - checkout
+      - node/install-packages
+      - when:
+          condition:
+            equal: [ node/macos, << parameters.executor >> ]
+          steps:
+            - run:
+                name: Build alternative architecture
+                command: MINIDUMP_BUILD_ARCH=arm64 node build.js
       - store_artifacts:
           path: ./bin
       - persist_to_workspace:
@@ -105,50 +33,49 @@ workflows:
   test_and_release:
     # Run the test jobs first, then the release only when all the test jobs are successful
     jobs:
-      - test-linux:
+      - node/test:
+          name: test-<< matrix.executor >>-<< matrix.node-version >>
+          pre-steps:
+            - run: git config --global core.autocrlf input
+          test-steps:
+            - when:
+                condition:
+                  equal: [ node/macos, << matrix.executor >> ]
+                steps:
+                  - run:
+                      name: Build alternative architecture
+                      command: MINIDUMP_BUILD_ARCH=arm64 node build.js
+            - run: yarn test
+          use-test-steps: true
           matrix:
+            alias: test
             parameters:
+              executor:
+                - node/linux
+                - node/macos
+                # - node/windows
               node-version:
-                - 18.14.0
-                - 16.19.0
-                - 14.19.0
-      - test-mac:
+                - '20.8'
+                - '18.18'
+                - '16.20'
+                - '14.21'
+      - release:
+          name: release-<< matrix.executor >>
           matrix:
+            alias: release
             parameters:
-              node-version:
-                - 18.14.0
-                - 16.19.0
-                - 14.19.0
-      # - test-windows:
-      #     matrix:
-      #       parameters:
-      #         node-version:
-      #           - 18.14.0
-      #           - 16.19.0
-      #           - 14.19.0
-      - release-linux:
-          filters:
-            branches:
-              only:
-                - main
-      - release-mac:
+              executor:
+                - node/linux
+                - node/macos
+                # - node/windows
           filters:
             branches:
               only:
                 - main
       - cfa/release:
-          prepare:
-            - run:
-                name: Init git submodules
-                command: git submodule update --init --recursive
-            - attach_workspace:
-                at: .
           requires:
-            - test-linux
-            - test-mac
-            # - test-windows
-            - release-linux
-            - release-mac
+            - test
+            - release
           filters:
             branches:
               only:
