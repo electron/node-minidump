@@ -141,7 +141,7 @@ describe('minidump', function () {
 })
 
 function downloadElectron (callback) {
-  download('1.4.3', {
+  download('27.1.2', {
     cacheRoot: path.resolve(__dirname, '.cache'),
     downloadOptions: {
       quiet: true
