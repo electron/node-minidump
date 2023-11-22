@@ -44,6 +44,11 @@ workflows:
                     - equal: [ '14.17', << matrix.node-version >> ]
                 steps:
                   - node/install-rosetta
+                  # run bash command arch -x86_64 zsh 
+                  - run: |
+                      arch -x86_64 zsh
+                      nvm install 14.17
+                      nvm use 14.17
           test-steps:
             - when:
                 condition:
