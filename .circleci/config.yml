@@ -48,7 +48,7 @@ workflows:
                   - run: |
                       arch -x86_64 zsh
                       nvm install 14.17
-                      nvm use 14.17
+                      nvm use 14.16
           test-steps:
             - when:
                 condition:
@@ -65,13 +65,16 @@ workflows:
               executor:
                 - node/linux
                 - node/macos
-                # - node/windows
+                - windows
               node-version:
                 - '20.9'
                 - '18.17'
                 - '16.20'
                 # Stay below 14.17.0 or nvm tries to download arm64 artifacts which don't exist
-                - '14.17'
+                - '14.16'
+            exclude:
+              - executor: node/macos
+                node-version: '14.16'
       - release:
           name: release-<< matrix.executor >>
           matrix:
@@ -94,3 +97,4 @@ workflows:
               only:
                 - main
           context: cfa-release
+          
