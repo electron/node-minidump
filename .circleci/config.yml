@@ -75,6 +75,8 @@ workflows:
             exclude:
               - executor: node/macos
                 node-version: '14.16'
+              - executor: node/linux
+                node-version: '14.16'
       - release:
           name: release-<< matrix.executor >>
           matrix:
