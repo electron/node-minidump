@@ -65,7 +65,7 @@ workflows:
               executor:
                 - node/linux
                 - node/macos
-                - windows
+                # - node/windows
               node-version:
                 - '20.9'
                 - '18.17'
