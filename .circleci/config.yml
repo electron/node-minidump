@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   cfa: continuousauth/npm@2.1.0
-  node: electronjs/node@1.4.1
+  node: electronjs/node@2.1.0
 
 jobs:
   release:
@@ -37,6 +37,18 @@ workflows:
           name: test-<< matrix.executor >>-<< matrix.node-version >>
           pre-steps:
             - run: git config --global core.autocrlf input
+            - when:
+                condition:
+                  and:
+                    - equal: [ node/macos, << matrix.executor >> ]
+                    - equal: [ '14.17', << matrix.node-version >> ]
+                steps:
+                  - node/install-rosetta
+                  # run bash command arch -x86_64 zsh 
+                  - run: |
+                      arch -x86_64 zsh
+                      nvm install 14.17
+                      nvm use 14.16
           test-steps:
             - when:
                 condition:
@@ -55,10 +67,16 @@ workflows:
                 - node/macos
                 # - node/windows
               node-version:
-                - '20.8'
-                - '18.18'
+                - '20.9'
+                - '18.17'
                 - '16.20'
-                - '14.21'
+                # Stay below 14.17.0 or nvm tries to download arm64 artifacts which don't exist
+                - '14.16'
+            exclude:
+              - executor: node/macos
+                node-version: '14.16'
+              - executor: node/linux
+                node-version: '14.16'
       - release:
           name: release-<< matrix.executor >>
           matrix:
@@ -81,3 +99,4 @@ workflows:
               only:
                 - main
           context: cfa-release
+          
