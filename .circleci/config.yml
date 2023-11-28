@@ -37,18 +37,6 @@ workflows:
           name: test-<< matrix.executor >>-<< matrix.node-version >>
           pre-steps:
             - run: git config --global core.autocrlf input
-            - when:
-                condition:
-                  and:
-                    - equal: [ node/macos, << matrix.executor >> ]
-                    - equal: [ '14.17', << matrix.node-version >> ]
-                steps:
-                  - node/install-rosetta
-                  # run bash command arch -x86_64 zsh 
-                  - run: |
-                      arch -x86_64 zsh
-                      nvm install 14.17
-                      nvm use 14.16
           test-steps:
             - when:
                 condition:
@@ -67,16 +55,13 @@ workflows:
                 - node/macos
                 # - node/windows
               node-version:
-                - '20.9'
-                - '18.17'
+                - '20.10'
+                - '18.18'
                 - '16.20'
-                # Stay below 14.17.0 or nvm tries to download arm64 artifacts which don't exist
-                - '14.16'
+                - '14.21'
             exclude:
               - executor: node/macos
-                node-version: '14.16'
-              - executor: node/linux
-                node-version: '14.16'
+                node-version: '14.21'
       - release:
           name: release-<< matrix.executor >>
           matrix:
