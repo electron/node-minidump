@@ -9,6 +9,9 @@
     "type": "git",
     "url": "https://github.com/electron/node-minidump.git"
   },
+  "engines": {
+    "node": ">=14"
+  },
   "bugs": {
     "url": "https://github.com/electron/node-minidump/issues"
   },
