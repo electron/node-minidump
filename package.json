@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/electron/node-minidump.git"
+    "url": "git+https://github.com/electron/node-minidump.git"
   },
   "engines": {
     "node": ">=14"
