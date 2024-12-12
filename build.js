@@ -27,6 +27,14 @@ function spawnSync (...args) {
   }
 }
 
+if (fs.existsSync(path.join(__dirname, '.git'))) {
+  // this is a development working tree of `node-minidump`, not an end-user install of the `minidump` package
+  spawnSync('git', ['submodule', 'update', '--init', '--recursive'], {
+    cwd: __dirname,
+    stdio: 'inherit'
+  })
+}
+
 const buildDir = path.join(__dirname, 'build', getEffectiveArch())
 if (!fs.existsSync(buildDir)) {
   fs.mkdirSync(buildDir, { recursive: true })
