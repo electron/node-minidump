@@ -17,7 +17,7 @@
   },
   "scripts": {
     "prepublishOnly": "shx chmod -R +x ./bin",
-    "preinstall": "yarn submodule && node build.js",
+    "preinstall": "node build.js",
     "submodule": "git submodule update --init --recursive",
     "test": "mocha test && standard"
   },
