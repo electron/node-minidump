@@ -15,6 +15,9 @@
   "bugs": {
     "url": "https://github.com/electron/node-minidump/issues"
   },
+  "publishConfig": {
+    "provenance": true
+  },
   "scripts": {
     "prepublishOnly": "shx chmod -R +x ./bin",
     "preinstall": "yarn submodule && node build.js",

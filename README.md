@@ -1,6 +1,6 @@
 # minidump - Process minidump files
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/electron/node-minidump/tree/main.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/electron/node-minidump/tree/main)
+[![Test](https://github.com/electron/node-minidump/actions/workflows/test.yml/badge.svg)](https://github.com/electron/node-minidump/actions/workflows/test.yml)
 [![npm version](http://img.shields.io/npm/v/minidump.svg)](https://npmjs.org/package/minidump)
 
 ## Installing
