@@ -25,7 +25,7 @@
     "test": "mocha test && standard"
   },
   "devDependencies": {
-    "@electron/get": "^2.0.2",
+    "@electron/get": "^4.0.1",
     "extract-zip": "^1.5.0",
     "mocha": "^10.8.2",
     "shx": "^0.3.3",
