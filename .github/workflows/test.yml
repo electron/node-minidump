@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '0 22 * * 3'
+    - cron: "0 22 * * 3"
   workflow_call:
 
 permissions:
@@ -31,9 +31,9 @@ jobs:
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: "${{ matrix.node-version }}"
-          cache: 'yarn'
+          cache: "yarn"
       - name: Install
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Build alternative architecture (macOS)
         if: ${{ matrix.os == 'macos-latest' }}
         run: MINIDUMP_BUILD_ARCH=arm64 node build.js
