@@ -1,10 +1,11 @@
-const fs = require('fs')
-const path = require('path')
-const childProcess = require('child_process')
-const { getEffectiveArch } = require('./lib/arch')
+import fs from 'node:fs'
+import path from 'node:path'
+import childProcess from 'node:child_process'
+
+import { getEffectiveArch } from './lib/arch.js'
 
 const exe = process.platform === 'win32' ? '.exe' : ''
-const binDir = path.join(__dirname, 'bin', `${process.platform}-${getEffectiveArch()}`)
+const binDir = path.join(import.meta.dirname, 'bin', `${process.platform}-${getEffectiveArch()}`)
 
 const minidumpStackwalkDest = path.join(binDir, 'minidump_stackwalk') + exe
 const minidumpDumpDest = path.join(binDir, 'minidump_dump') + exe
@@ -27,7 +28,7 @@ function spawnSync (...args) {
   }
 }
 
-const buildDir = path.join(__dirname, 'build', getEffectiveArch())
+const buildDir = path.join(import.meta.dirname, 'build', getEffectiveArch())
 if (!fs.existsSync(buildDir)) {
   fs.mkdirSync(buildDir, { recursive: true })
 }
