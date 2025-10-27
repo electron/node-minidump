@@ -40,11 +40,11 @@ if (getEffectiveArch() !== process.arch && process.platform === 'darwin') {
   crossCompileHost = 'x86_64-apple-darwin20.6.0'
 }
 
-spawnSync(path.join(__dirname, 'deps', 'breakpad', 'configure'), crossCompileHost ? [`--host=${crossCompileHost}`] : [], {
+spawnSync(path.join(import.meta.dirname, 'deps', 'breakpad', 'configure'), crossCompileHost ? [`--host=${crossCompileHost}`] : [], {
   cwd: buildDir,
   env: {
     ...process.env,
-    CPPFLAGS: [`-I${path.relative(buildDir, path.join(__dirname, 'deps'))}`, ...(overrideArch ? [`-arch ${overrideArch}`] : [])].join(' '),
+    CPPFLAGS: [`-I${path.relative(buildDir, path.join(import.meta.dirname, 'deps'))}`, ...(overrideArch ? [`-arch ${overrideArch}`] : [])].join(' '),
     LDFLAGS: overrideArch ? `-arch ${overrideArch}` : undefined
   },
   stdio: 'inherit'
@@ -59,7 +59,7 @@ spawnSync('make', ['-C', buildDir, '-j', require('os').cpus().length, ...targets
 })
 
 if (process.platform === 'darwin') {
-  spawnSync('xcodebuild', ['-project', path.join(__dirname, 'deps', 'breakpad', 'src', 'tools', 'mac', 'dump_syms', 'dump_syms.xcodeproj'), 'build'], {
+  spawnSync('xcodebuild', ['-project', path.join(import.meta.dirname, 'deps', 'breakpad', 'src', 'tools', 'mac', 'dump_syms', 'dump_syms.xcodeproj'), 'build'], {
     stdio: 'inherit'
   })
 }
@@ -77,7 +77,7 @@ fs.copyFileSync(minidumpDump, minidumpDumpDest)
 
 const dumpSyms = (() => {
   if (process.platform === 'darwin') {
-    return path.resolve(__dirname, 'deps', 'breakpad', 'src', 'tools', 'mac', 'dump_syms', 'build', 'Release', 'dump_syms')
+    return path.resolve(import.meta.dirname, 'deps', 'breakpad', 'src', 'tools', 'mac', 'dump_syms', 'build', 'Release', 'dump_syms')
   } else if (process.platform === 'linux') {
     return path.resolve(buildDir, 'src', 'tools', 'linux', 'dump_syms', 'dump_syms')
   }
