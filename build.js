@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import childProcess from 'node:child_process'
 
@@ -54,7 +55,7 @@ if (process.platform === 'linux') {
   targets.push('src/tools/linux/dump_syms/dump_syms')
 }
 
-spawnSync('make', ['-C', buildDir, '-j', require('os').cpus().length, ...targets], {
+spawnSync('make', ['-C', buildDir, '-j', os.cpus().length, ...targets], {
   stdio: 'inherit'
 })
 
