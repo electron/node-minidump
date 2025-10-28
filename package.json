@@ -3,6 +3,7 @@
   "name": "minidump",
   "description": "Read and process minidump file",
   "version": "0.0.0-development",
+  "type": "module",
   "types": "index.d.ts",
   "license": "MIT",
   "repository": {
@@ -10,7 +11,7 @@
     "url": "git+https://github.com/electron/node-minidump.git"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=22.12.0"
   },
   "bugs": {
     "url": "https://github.com/electron/node-minidump/issues"
@@ -25,7 +26,7 @@
     "test": "mocha test && standard"
   },
   "devDependencies": {
-    "@electron/get": "^2.0.2",
+    "@electron/get": "^4.0.1",
     "extract-zip": "^1.5.0",
     "mocha": "^10.8.2",
     "shx": "^0.3.3",
@@ -41,5 +42,6 @@
     "build.js",
     "deps",
     "bin"
-  ]
+  ],
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

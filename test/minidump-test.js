@@ -1,10 +1,13 @@
-const assert = require('assert')
-const path = require('path')
+import assert from 'node:assert'
+import path from 'node:path'
 
-const minidump = require('..')
-const { download, downloadArtifact } = require('@electron/get')
-const extractZip = require('extract-zip')
-const temp = require('temp').track()
+import * as minidump from '../lib/minidump.js'
+
+import { download, downloadArtifact } from '@electron/get'
+import extractZip from 'extract-zip'
+import temp from 'temp'
+
+temp.track()
 
 const describe = global.describe
 const it = global.it
@@ -18,7 +21,11 @@ describe('minidump', function () {
         downloadElectronSymbols('darwin', function (error, symbolsPath) {
           if (error) return done(error)
 
-          const dumpPath = path.join(__dirname, 'fixtures', 'mac.dmp')
+          const dumpPath = path.join(
+            import.meta.dirname,
+            'fixtures',
+            'mac.dmp'
+          )
           minidump.walkStack(dumpPath, symbolsPath, function (error, report) {
             if (error) return done(error)
 
@@ -26,7 +33,12 @@ describe('minidump', function () {
             assert.notEqual(report.length, 0)
 
             report = report.toString()
-            assert.notEqual(report.indexOf('Electron Framework!atom::(anonymous namespace)::Crash() [atom_bindings.cc : 27 + 0x0]'), -1)
+            assert.notEqual(
+              report.indexOf(
+                'Electron Framework!atom::(anonymous namespace)::Crash() [atom_bindings.cc : 27 + 0x0]'
+              ),
+              -1
+            )
             done()
           })
         })
@@ -38,7 +50,11 @@ describe('minidump', function () {
         downloadElectronSymbols('win32', function (error, symbolsPath) {
           if (error) return done(error)
 
-          const dumpPath = path.join(__dirname, 'fixtures', 'windows.dmp')
+          const dumpPath = path.join(
+            import.meta.dirname,
+            'fixtures',
+            'windows.dmp'
+          )
           minidump.walkStack(dumpPath, symbolsPath, function (error, report) {
             if (error) return done(error)
 
@@ -46,7 +62,12 @@ describe('minidump', function () {
             assert.notEqual(report.length, 0)
 
             report = report.toString()
-            assert.notEqual(report.indexOf('electron.exe!atom::`anonymous namespace\'::Crash [atom_bindings.cc : 27 + 0x0]'), -1)
+            assert.notEqual(
+              report.indexOf(
+                "electron.exe!atom::`anonymous namespace'::Crash [atom_bindings.cc : 27 + 0x0]"
+              ),
+              -1
+            )
             done()
           })
         })
@@ -58,13 +79,20 @@ describe('minidump', function () {
         downloadElectronSymbols('linux', function (error, symbolsPath) {
           if (error) return done(error)
 
-          const dumpPath = path.join(__dirname, 'fixtures', 'linux.dmp')
+          const dumpPath = path.join(
+            import.meta.dirname,
+            'fixtures',
+            'linux.dmp'
+          )
           minidump.walkStack(dumpPath, symbolsPath, function (error, report) {
             if (error) return done(error)
 
             report = report.toString()
             assert.notEqual(report.length, 0)
-            assert.notEqual(report.indexOf('electron!Crash [atom_bindings.cc : 27 + 0x0]'), -1)
+            assert.notEqual(
+              report.indexOf('electron!Crash [atom_bindings.cc : 27 + 0x0]'),
+              -1
+            )
             done()
           })
         })
@@ -89,26 +117,33 @@ describe('minidump', function () {
 
   describe('dump()', function () {
     it('calls back with minidump info', function (done) {
-      minidump.dump(path.join(__dirname, 'fixtures', 'linux.dmp'), (err, rep) => {
-        if (err) {
-          // do nothing, errors are fine here
+      minidump.dump(
+        path.join(import.meta.dirname, 'fixtures', 'linux.dmp'),
+        (err, rep) => {
+          if (err) {
+            // do nothing, errors are fine here
+          }
+          const report = rep.toString('utf8')
+          assert.notEqual(report.length, 0)
+          assert.notEqual(report.indexOf('libXss.so.1.0.0'), -1)
+          done()
         }
-        const report = rep.toString('utf8')
-        assert.notEqual(report.length, 0)
-        assert.notEqual(report.indexOf('libXss.so.1.0.0'), -1)
-        done()
-      })
+      )
     })
   })
 
   describe('moduleList()', function () {
     describe('on a Linux dump', () => {
       it('calls back with a module list', function (done) {
-        const dumpPath = path.join(__dirname, 'fixtures', 'linux.dmp')
+        const dumpPath = path.join(
+          import.meta.dirname,
+          'fixtures',
+          'linux.dmp'
+        )
         minidump.moduleList(dumpPath, (err, modules) => {
           if (err) return done(err)
           assert.notEqual(modules.length, 0)
-          assert(modules.some(m => m.name.endsWith('/electron')))
+          assert(modules.some((m) => m.name.endsWith('/electron')))
           done()
         })
       })
@@ -116,11 +151,15 @@ describe('minidump', function () {
 
     describe('on a Windows dump', () => {
       it('calls back with a module list', function (done) {
-        const dumpPath = path.join(__dirname, 'fixtures', 'windows.dmp')
+        const dumpPath = path.join(
+          import.meta.dirname,
+          'fixtures',
+          'windows.dmp'
+        )
         minidump.moduleList(dumpPath, (err, modules) => {
           if (err) return done(err)
           assert.notEqual(modules.length, 0)
-          assert(modules.some(m => m.name.endsWith('\\electron.exe')))
+          assert(modules.some((m) => m.name.endsWith('\\electron.exe')))
           done()
         })
       })
@@ -128,11 +167,11 @@ describe('minidump', function () {
 
     describe('on a macOS dump', () => {
       it('calls back with a module list', function (done) {
-        const dumpPath = path.join(__dirname, 'fixtures', 'mac.dmp')
+        const dumpPath = path.join(import.meta.dirname, 'fixtures', 'mac.dmp')
         minidump.moduleList(dumpPath, (err, modules) => {
           if (err) return done(err)
           assert.notEqual(modules.length, 0)
-          assert(modules.some(m => m.name.endsWith('/Electron Helper')))
+          assert(modules.some((m) => m.name.endsWith('/Electron Helper')))
           done()
         })
       })
@@ -142,29 +181,40 @@ describe('minidump', function () {
 
 function downloadElectron (callback) {
   download('27.1.2', {
-    cacheRoot: path.resolve(__dirname, '.cache'),
+    cacheRoot: path.resolve(import.meta.dirname, '.cache'),
     downloadOptions: {
       quiet: true
     }
-  }).then((zipPath) => {
-    const electronPath = temp.mkdirSync('node-minidump-')
-    extractZip(zipPath, { dir: electronPath }, function (error) {
-      if (error) return callback(error)
-
-      if (process.platform === 'darwin') {
-        callback(null, path.join(electronPath, 'Electron.app', 'Contents', 'MacOS', 'Electron'))
-      } else {
-        callback(null, path.join(electronPath, 'electron'))
-      }
-    })
-  }).catch((error) => {
-    callback(error)
   })
+    .then((zipPath) => {
+      const electronPath = temp.mkdirSync('node-minidump-')
+      extractZip(zipPath, { dir: electronPath }, function (error) {
+        if (error) return callback(error)
+
+        if (process.platform === 'darwin') {
+          callback(
+            null,
+            path.join(
+              electronPath,
+              'Electron.app',
+              'Contents',
+              'MacOS',
+              'Electron'
+            )
+          )
+        } else {
+          callback(null, path.join(electronPath, 'electron'))
+        }
+      })
+    })
+    .catch((error) => {
+      callback(error)
+    })
 }
 
 function downloadElectronSymbols (platform, callback) {
   downloadArtifact({
-    cacheRoot: path.resolve(__dirname, '.cache'),
+    cacheRoot: path.resolve(import.meta.dirname, '.cache'),
     version: '1.4.3', // Dumps were generated with Electron 1.4.3 x64
     arch: 'x64',
     platform,
@@ -173,13 +223,15 @@ function downloadElectronSymbols (platform, callback) {
     downloadOptions: {
       quiet: true
     }
-  }).then((zipPath) => {
-    const symbolsPath = temp.mkdirSync('node-minidump-')
-    extractZip(zipPath, { dir: symbolsPath }, function (error) {
-      if (error) return callback(error)
-      callback(null, path.join(symbolsPath, 'electron.breakpad.syms'))
-    })
-  }).catch((error) => {
-    callback(error)
   })
+    .then((zipPath) => {
+      const symbolsPath = temp.mkdirSync('node-minidump-')
+      extractZip(zipPath, { dir: symbolsPath }, function (error) {
+        if (error) return callback(error)
+        callback(null, path.join(symbolsPath, 'electron.breakpad.syms'))
+      })
+    })
+    .catch((error) => {
+      callback(error)
+    })
 }

@@ -17,7 +17,7 @@ npm install minidump
 ## Docs
 
 ```javascript
-var minidump = require('minidump');
+import minidump from 'minidump';
 ```
 
 ### minidump.addSymbolPath(path1, ..., pathN)
