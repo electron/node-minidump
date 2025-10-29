@@ -4,3 +4,4 @@
 *.swp
 npm-debug.log
 bin
+.yarn/install-state.gz
