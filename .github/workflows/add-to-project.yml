@@ -4,7 +4,7 @@ on:
   issues:
     types:
       - opened
-  pull_request_target: # zizmor: ignore[dangerous-triggers] add-to-project never checks out PR code, has empty permissions, only fires on opened
+  pull_request_target: # zizmor: ignore[dangerous-triggers]
     types:
       - opened
 
