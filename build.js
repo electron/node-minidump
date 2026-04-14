@@ -1,16 +1,16 @@
-import fs from 'node:fs'
-import os from 'node:os'
-import path from 'node:path'
-import childProcess from 'node:child_process'
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import childProcess from 'node:child_process';
 
-import { getEffectiveArch } from './lib/arch.js'
+import { getEffectiveArch } from './lib/arch.js';
 
-const exe = process.platform === 'win32' ? '.exe' : ''
-const binDir = path.join(import.meta.dirname, 'bin', `${process.platform}-${getEffectiveArch()}`)
+const exe = process.platform === 'win32' ? '.exe' : '';
+const binDir = path.join(import.meta.dirname, 'bin', `${process.platform}-${getEffectiveArch()}`);
 
-const minidumpStackwalkDest = path.join(binDir, 'minidump_stackwalk') + exe
-const minidumpDumpDest = path.join(binDir, 'minidump_dump') + exe
-const dumpSymsDest = path.join(binDir, 'dump_syms') + exe
+const minidumpStackwalkDest = path.join(binDir, 'minidump_stackwalk') + exe;
+const minidumpDumpDest = path.join(binDir, 'minidump_dump') + exe;
+const dumpSymsDest = path.join(binDir, 'dump_syms') + exe;
 
 // do not build if executables already exist
 if (
@@ -18,85 +18,129 @@ if (
   fs.existsSync(minidumpDumpDest) &&
   fs.existsSync(dumpSymsDest)
 ) {
-  process.exit(0)
+  process.exit(0);
 }
 
-function spawnSync (...args) {
-  const result = childProcess.spawnSync(...args)
-  if (result.error) throw result.error
+function spawnSync(...args) {
+  const result = childProcess.spawnSync(...args);
+  if (result.error) throw result.error;
   if (result.status !== 0) {
-    process.exit(result.status)
+    process.exit(result.status);
   }
 }
 
-const buildDir = path.join(import.meta.dirname, 'build', getEffectiveArch())
+const buildDir = path.join(import.meta.dirname, 'build', getEffectiveArch());
 if (!fs.existsSync(buildDir)) {
-  fs.mkdirSync(buildDir, { recursive: true })
+  fs.mkdirSync(buildDir, { recursive: true });
 }
 
-let overrideArch = ''
-let crossCompileHost = ''
+let overrideArch = '';
+let crossCompileHost = '';
 if (getEffectiveArch() !== process.arch && process.platform === 'darwin') {
-  overrideArch = getEffectiveArch() === 'arm64' ? 'arm64' : 'x86_64'
-  crossCompileHost = 'x86_64-apple-darwin20.6.0'
+  overrideArch = getEffectiveArch() === 'arm64' ? 'arm64' : 'x86_64';
+  crossCompileHost = 'x86_64-apple-darwin20.6.0';
 }
 
-spawnSync(path.join(import.meta.dirname, 'deps', 'breakpad', 'configure'), crossCompileHost ? [`--host=${crossCompileHost}`] : [], {
-  cwd: buildDir,
-  env: {
-    ...process.env,
-    CPPFLAGS: [`-I${path.relative(buildDir, path.join(import.meta.dirname, 'deps'))}`, ...(overrideArch ? [`-arch ${overrideArch}`] : [])].join(' '),
-    LDFLAGS: overrideArch ? `-arch ${overrideArch}` : undefined
+spawnSync(
+  path.join(import.meta.dirname, 'deps', 'breakpad', 'configure'),
+  crossCompileHost ? [`--host=${crossCompileHost}`] : [],
+  {
+    cwd: buildDir,
+    env: {
+      ...process.env,
+      CPPFLAGS: [
+        `-I${path.relative(buildDir, path.join(import.meta.dirname, 'deps'))}`,
+        ...(overrideArch ? [`-arch ${overrideArch}`] : []),
+      ].join(' '),
+      LDFLAGS: overrideArch ? `-arch ${overrideArch}` : undefined,
+    },
+    stdio: 'inherit',
   },
-  stdio: 'inherit'
-})
-const targets = ['src/processor/minidump_stackwalk', 'src/processor/minidump_dump']
+);
+const targets = ['src/processor/minidump_stackwalk', 'src/processor/minidump_dump'];
 if (process.platform === 'linux') {
-  targets.push('src/tools/linux/dump_syms/dump_syms')
+  targets.push('src/tools/linux/dump_syms/dump_syms');
 }
 
 spawnSync('make', ['-C', buildDir, '-j', os.cpus().length, ...targets], {
-  stdio: 'inherit'
-})
+  stdio: 'inherit',
+});
 
 if (process.platform === 'darwin') {
-  spawnSync('xcodebuild', ['-project', path.join(import.meta.dirname, 'deps', 'breakpad', 'src', 'tools', 'mac', 'dump_syms', 'dump_syms.xcodeproj'), 'build'], {
-    stdio: 'inherit'
-  })
+  spawnSync(
+    'xcodebuild',
+    [
+      '-project',
+      path.join(
+        import.meta.dirname,
+        'deps',
+        'breakpad',
+        'src',
+        'tools',
+        'mac',
+        'dump_syms',
+        'dump_syms.xcodeproj',
+      ),
+      'build',
+    ],
+    {
+      stdio: 'inherit',
+    },
+  );
 }
 
 // copy to bin folder
 if (!fs.existsSync(binDir)) {
-  fs.mkdirSync(binDir, { recursive: true })
+  fs.mkdirSync(binDir, { recursive: true });
 }
 
-const minidumpStackwalk = path.resolve(buildDir, 'src', 'processor', 'minidump_stackwalk') + exe
-fs.copyFileSync(minidumpStackwalk, minidumpStackwalkDest)
+const minidumpStackwalk = path.resolve(buildDir, 'src', 'processor', 'minidump_stackwalk') + exe;
+fs.copyFileSync(minidumpStackwalk, minidumpStackwalkDest);
 
-const minidumpDump = path.resolve(buildDir, 'src', 'processor', 'minidump_dump') + exe
-fs.copyFileSync(minidumpDump, minidumpDumpDest)
+const minidumpDump = path.resolve(buildDir, 'src', 'processor', 'minidump_dump') + exe;
+fs.copyFileSync(minidumpDump, minidumpDumpDest);
 
 const dumpSyms = (() => {
   if (process.platform === 'darwin') {
-    return path.resolve(import.meta.dirname, 'deps', 'breakpad', 'src', 'tools', 'mac', 'dump_syms', 'build', 'Release', 'dump_syms')
+    return path.resolve(
+      import.meta.dirname,
+      'deps',
+      'breakpad',
+      'src',
+      'tools',
+      'mac',
+      'dump_syms',
+      'build',
+      'Release',
+      'dump_syms',
+    );
   } else if (process.platform === 'linux') {
-    return path.resolve(buildDir, 'src', 'tools', 'linux', 'dump_syms', 'dump_syms')
+    return path.resolve(buildDir, 'src', 'tools', 'linux', 'dump_syms', 'dump_syms');
   }
-})()
-fs.copyFileSync(dumpSyms, dumpSymsDest)
+})();
+fs.copyFileSync(dumpSyms, dumpSymsDest);
 
-fs.readdirSync(binDir).forEach(file => {
-  const absFile = path.join(binDir, file)
-  stripBin(absFile)
-  maybeSignBin(absFile)
-})
+fs.readdirSync(binDir).forEach((file) => {
+  const absFile = path.join(binDir, file);
+  stripBin(absFile);
+  maybeSignBin(absFile);
+});
 
-function stripBin (file) {
-  return childProcess.execFileSync(process.env.STRIP || 'strip', [file, process.platform === 'darwin' ? '-Sx' : '--strip-all'])
+function stripBin(file) {
+  return childProcess.execFileSync(process.env.STRIP || 'strip', [
+    file,
+    process.platform === 'darwin' ? '-Sx' : '--strip-all',
+  ]);
 }
 
-function maybeSignBin (file) {
-  if (process.platform !== 'darwin') return
+function maybeSignBin(file) {
+  if (process.platform !== 'darwin') return;
 
-  return childProcess.execFileSync('codesign', ['--sign', '-', '--force', '--preserve-metadata=entitlements,requirements,flags,runtime', file])
+  return childProcess.execFileSync('codesign', [
+    '--sign',
+    '-',
+    '--force',
+    '--preserve-metadata=entitlements,requirements,flags,runtime',
+    file,
+  ]);
 }

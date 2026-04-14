@@ -1,7 +1,7 @@
 /**
  * Add search paths for looking up symbol files.
  */
-export function addSymbolPath(...paths: string[]): void
+export function addSymbolPath(...paths: string[]): void;
 
 /**
  * Get the stack trace from `minidumpFilePath`
@@ -10,14 +10,14 @@ export function addSymbolPath(...paths: string[]): void
 export function walkStack(
   minidump: string,
   callback: (err: Error, result: Buffer) => void,
-  commandArgs?: string[]
-): void
+  commandArgs?: string[],
+): void;
 export function walkStack(
   minidump: string,
   symbolPaths: string[],
   callback: (err: Error, result: Buffer) => void,
-  commandArgs?: string[]
-): void
+  commandArgs?: string[],
+): void;
 
 /**
  * Get the contents of the minidump file in somewhat readable text(not yet symbolicated).
@@ -27,7 +27,7 @@ export function dump(
   minidump: string,
   callback: (err: Error, result: Buffer) => void,
   commandArgs?: string[],
-): void
+): void;
 
 /**
  * Dump debug symbols in minidump format from `binaryPath`
@@ -35,17 +35,17 @@ export function dump(
  */
 export function dumpSymbol(
   binaryPath: string,
-  callback: (err: Error, result: string) => void
-): void
+  callback: (err: Error, result: string) => void,
+): void;
 
 type ModuleInfo = {
-  version: string
-  name: string
-  pdb_file_name?: string
-  debug_identifier?: string
-}
+  version: string;
+  name: string;
+  pdb_file_name?: string;
+  debug_identifier?: string;
+};
 
 export function moduleList(
   minidump: string,
-  callback: (err: Error, result: ModuleInfo[]) => void
-): void
+  callback: (err: Error, result: ModuleInfo[]) => void,
+): void;
