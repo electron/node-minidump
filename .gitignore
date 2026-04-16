@@ -5,3 +5,4 @@
 npm-debug.log
 bin
 .yarn/install-state.gz
+.DS_Store

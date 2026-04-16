@@ -20,17 +20,23 @@
     "provenance": true
   },
   "scripts": {
+    "lint": "oxfmt --check . && oxlint",
+    "lint:fix": "oxfmt --write . && oxlint --fix",
     "preinstall": "yarn submodule && node build.js",
     "prepack": "shx chmod -R +x ./bin",
     "submodule": "git submodule update --init --recursive",
-    "test": "mocha test && standard"
+    "test": "mocha test",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@electron/get": "^4.0.1",
     "extract-zip": "^1.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "mocha": "^10.8.2",
+    "oxfmt": "^0.44.0",
+    "oxlint": "^1.59.0",
     "shx": "^0.3.3",
-    "standard": "^17.0.0",
     "temp": "^0.8.3"
   },
   "files": [
@@ -43,6 +49,15 @@
     "deps",
     "bin"
   ],
+  "lint-staged": {
+    "*.js": [
+      "oxfmt --write",
+      "oxlint --fix"
+    ],
+    "*.json": [
+      "oxfmt --write"
+    ]
+  },
   "resolutions": {
     "fsevents": "npm:@electron/fsevents@2.3.3-fork"
   },
