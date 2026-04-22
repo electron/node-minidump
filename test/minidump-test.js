@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+import fs from 'node:fs';
 import path from 'node:path';
 
 import * as minidump from '../lib/minidump.js';
@@ -146,6 +147,49 @@ describe('minidump', function () {
           if (err) return done(err);
           assert.notEqual(modules.length, 0);
           assert(modules.some((m) => m.name.endsWith('/Electron Helper')));
+          done();
+        });
+      });
+    });
+
+    describe('on a malformed dump', () => {
+      function writeDump(buf) {
+        const dumpPath = temp.path({ suffix: '.dmp' });
+        fs.writeFileSync(dumpPath, buf);
+        return dumpPath;
+      }
+
+      it('returns an error for a truncated header', function (done) {
+        const dumpPath = writeDump(Buffer.alloc(16));
+        minidump.moduleList(dumpPath, (err, modules) => {
+          assert(err instanceof Error, 'expected an Error');
+          assert.match(err.message, /too small/);
+          assert.equal(modules, undefined);
+          done();
+        });
+      });
+
+      it('returns an error for an invalid magic signature', function (done) {
+        const dumpPath = writeDump(Buffer.alloc(32));
+        minidump.moduleList(dumpPath, (err, modules) => {
+          assert(err instanceof Error, 'expected an Error');
+          assert.equal(err.message, 'not a minidump file');
+          assert.equal(modules, undefined);
+          done();
+        });
+      });
+
+      it('returns an error for an out-of-bounds stream_directory_rva', function (done) {
+        const buf = Buffer.alloc(32);
+        buf.writeUInt32LE(0x504d444d, 0); // 'MDMP'
+        buf.writeUInt32LE(0xa793, 4); // version
+        buf.writeUInt32LE(1, 8); // stream_count
+        buf.writeUInt32LE(0x1000, 12); // stream_directory_rva — far past EOF
+        const dumpPath = writeDump(buf);
+        minidump.moduleList(dumpPath, (err, modules) => {
+          assert(err instanceof Error, 'expected an Error');
+          assert.match(err.message, /out of bounds/);
+          assert.equal(modules, undefined);
           done();
         });
       });
