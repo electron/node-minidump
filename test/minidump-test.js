@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
+import { describe, it, before, after } from 'node:test';
 
 import * as minidump from '../lib/minidump.js';
 
@@ -10,15 +11,10 @@ import temp from 'temp';
 
 temp.track();
 
-const describe = global.describe;
-const it = global.it;
-
-describe('minidump', function () {
-  this.timeout(3 * 60 * 1000);
-
+describe('minidump', { timeout: 3 * 60 * 1000 }, function () {
   describe('walkStack()', function () {
     describe('macOS dump', function () {
-      it('calls back with a report', function (done) {
+      it('calls back with a report', function (t, done) {
         downloadElectronSymbols('darwin', function (error, symbolsPath) {
           if (error) return done(error);
 
@@ -43,7 +39,7 @@ describe('minidump', function () {
     });
 
     describe('Windows dump', function () {
-      it('calls back with a report', function (done) {
+      it('calls back with a report', function (t, done) {
         downloadElectronSymbols('win32', function (error, symbolsPath) {
           if (error) return done(error);
 
@@ -68,7 +64,7 @@ describe('minidump', function () {
     });
 
     describe('Linux dump', function () {
-      it('calls back with a report', function (done) {
+      it('calls back with a report', function (t, done) {
         downloadElectronSymbols('linux', function (error, symbolsPath) {
           if (error) return done(error);
 
@@ -87,7 +83,7 @@ describe('minidump', function () {
   });
 
   describe('dumpSymbol()', function () {
-    it('calls back with a minidump', function (done) {
+    it('calls back with a minidump', function (t, done) {
       downloadElectron(function (error, binaryPath) {
         if (error) return done(error);
         minidump.dumpSymbol(binaryPath, function (error, minidump) {
@@ -102,7 +98,7 @@ describe('minidump', function () {
   });
 
   describe('dump()', function () {
-    it('calls back with minidump info', function (done) {
+    it('calls back with minidump info', function (t, done) {
       minidump.dump(path.join(import.meta.dirname, 'fixtures', 'linux.dmp'), (err, rep) => {
         if (err) {
           // do nothing, errors are fine here
@@ -117,7 +113,7 @@ describe('minidump', function () {
 
   describe('moduleList()', function () {
     describe('on a Linux dump', () => {
-      it('calls back with a module list', function (done) {
+      it('calls back with a module list', function (t, done) {
         const dumpPath = path.join(import.meta.dirname, 'fixtures', 'linux.dmp');
         minidump.moduleList(dumpPath, (err, modules) => {
           if (err) return done(err);
@@ -129,7 +125,7 @@ describe('minidump', function () {
     });
 
     describe('on a Windows dump', () => {
-      it('calls back with a module list', function (done) {
+      it('calls back with a module list', function (t, done) {
         const dumpPath = path.join(import.meta.dirname, 'fixtures', 'windows.dmp');
         minidump.moduleList(dumpPath, (err, modules) => {
           if (err) return done(err);
@@ -141,7 +137,7 @@ describe('minidump', function () {
     });
 
     describe('on a macOS dump', () => {
-      it('calls back with a module list', function (done) {
+      it('calls back with a module list', function (t, done) {
         const dumpPath = path.join(import.meta.dirname, 'fixtures', 'mac.dmp');
         minidump.moduleList(dumpPath, (err, modules) => {
           if (err) return done(err);
@@ -159,7 +155,7 @@ describe('minidump', function () {
         return dumpPath;
       }
 
-      it('returns an error for a truncated header', function (done) {
+      it('returns an error for a truncated header', function (t, done) {
         const dumpPath = writeDump(Buffer.alloc(16));
         minidump.moduleList(dumpPath, (err, modules) => {
           assert(err instanceof Error, 'expected an Error');
@@ -169,7 +165,7 @@ describe('minidump', function () {
         });
       });
 
-      it('returns an error for an invalid magic signature', function (done) {
+      it('returns an error for an invalid magic signature', function (t, done) {
         const dumpPath = writeDump(Buffer.alloc(32));
         minidump.moduleList(dumpPath, (err, modules) => {
           assert(err instanceof Error, 'expected an Error');
@@ -179,7 +175,7 @@ describe('minidump', function () {
         });
       });
 
-      it('returns an error for an out-of-bounds stream_directory_rva', function (done) {
+      it('returns an error for an out-of-bounds stream_directory_rva', function (t, done) {
         const buf = Buffer.alloc(32);
         buf.writeUInt32LE(0x504d444d, 0); // 'MDMP'
         buf.writeUInt32LE(0xa793, 4); // version
