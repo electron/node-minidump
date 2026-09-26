@@ -29,8 +29,8 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@electron-internal/extract-zip": "^1.0.5",
     "@electron/get": "^4.0.1",
-    "extract-zip": "^1.5.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.4.1",
     "oxfmt": "^0.44.0",

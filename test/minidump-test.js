@@ -6,7 +6,7 @@ import { describe, it, before, after } from 'node:test';
 import * as minidump from '../lib/minidump.js';
 
 import { download, downloadArtifact } from '@electron/get';
-import extractZip from 'extract-zip';
+import extract from '@electron-internal/extract-zip';
 import temp from 'temp';
 
 temp.track();
@@ -202,19 +202,17 @@ function downloadElectron(callback) {
   })
     .then((zipPath) => {
       const electronPath = temp.mkdirSync('node-minidump-');
-      extractZip(zipPath, { dir: electronPath }, function (error) {
-        if (error) return callback(error);
-
+      return extract(zipPath, { dir: electronPath }).then(() => {
         if (process.platform === 'darwin') {
-          callback(null, path.join(electronPath, 'Electron.app', 'Contents', 'MacOS', 'Electron'));
-        } else {
-          callback(null, path.join(electronPath, 'electron'));
+          return path.join(electronPath, 'Electron.app', 'Contents', 'MacOS', 'Electron');
         }
+        return path.join(electronPath, 'electron');
       });
     })
-    .catch((error) => {
-      callback(error);
-    });
+    .then(
+      (electronPath) => callback(null, electronPath),
+      (error) => callback(error),
+    );
 }
 
 function downloadElectronSymbols(platform, callback) {
@@ -231,12 +229,12 @@ function downloadElectronSymbols(platform, callback) {
   })
     .then((zipPath) => {
       const symbolsPath = temp.mkdirSync('node-minidump-');
-      extractZip(zipPath, { dir: symbolsPath }, function (error) {
-        if (error) return callback(error);
-        callback(null, path.join(symbolsPath, 'electron.breakpad.syms'));
-      });
+      return extract(zipPath, { dir: symbolsPath }).then(() =>
+        path.join(symbolsPath, 'electron.breakpad.syms'),
+      );
     })
-    .catch((error) => {
-      callback(error);
-    });
+    .then(
+      (symbolsPath) => callback(null, symbolsPath),
+      (error) => callback(error),
+    );
 }
