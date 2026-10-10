@@ -11,13 +11,17 @@ npm install minidump
 
 ## Building (for development)
 
+`minidump` includes [`breakpad`](https://chromium.googlesource.com/breakpad/breakpad) as a git submodule.
+
 * `git clone --recurse-submodules https://github.com/electron/node-minidump`
-* `npm install`
+* `yarn install`
 
 ## Docs
 
+This package is
+
 ```javascript
-import minidump from 'minidump';
+import * as minidump from 'minidump';
 ```
 
 ### minidump.addSymbolPath(path1, ..., pathN)
