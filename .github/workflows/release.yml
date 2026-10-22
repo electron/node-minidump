@@ -14,12 +14,12 @@ jobs:
   test:
     permissions:
       contents: read
-    uses: ./.github/workflows/test.yml
+    uses: $/.github/workflows/test.yml
 
   build:
     permissions:
       contents: read
-    uses: ./.github/workflows/build.yml
+    uses: $/.github/workflows/build.yml
 
   release:
     name: Release
